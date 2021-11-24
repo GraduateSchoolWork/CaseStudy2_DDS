@@ -1,0 +1,94 @@
+---
+title: "DDS_CaseStudy_2"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+author: "Kevin Boyd"
+date: "11/21/2021"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Load Libraries
+```{r, message=F}
+library(tidyverse)
+library(GGally)
+library(cowplot)
+```
+
+
+# Load and look at the data
+```{r}
+data <- read.csv("CaseStudy2-data.csv", header = T)
+str(data)
+```
+
+
+# EDA
+## Attrition Dependent on Marital Status
+```{r}
+# divorce contribute to attrition
+bar <- ggplot(data, aes(x=MaritalStatus, fill = MaritalStatus)) +
+  geom_bar() +
+  facet_wrap(~Attrition) +
+  ggtitle("Attrition Dependent on Marital Status ") +
+  xlab("Attrition") +
+  ylab("Count")
+```
+
+
+```{r}
+# Yes Attrition
+# make new data frames for married, divorced, and single
+df1 <- data %>%
+  filter(Attrition == "Yes")
+df1length <- NROW(df1)
+df1married <- length(grep("Married", df1$MaritalStatus))
+df1divorced <- length(grep("Divorced", df1$MaritalStatus))
+df1single <- length(grep("Single", df1$MaritalStatus))
+
+Yes_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"), 
+                     Value = c(df1married,df1divorced,df1single))
+
+plot1 <- ggplot(Yes_df, aes(x="", y=Value, fill=MaritalStatus)) +
+  geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: Yes")
+pie1 <- plot1 + coord_polar("y", start=0)
+```
+
+```{r}
+# No Attrition
+# make new data frames for married, divorced, and single
+df2 <- data %>%
+  filter(Attrition == "No")
+df2length <- NROW(df2)
+df2married <- length(grep("Married", df2$MaritalStatus))
+df2divorced <- length(grep("Divorced", df2$MaritalStatus))
+df2single <- length(grep("Single", df2$MaritalStatus))
+
+No_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"), 
+                     Value = c(df2married,df2divorced,df2single))
+
+plot2 <- ggplot(No_df, aes(x="", y=Value, fill=MaritalStatus)) +
+  geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: No")
+pie2 <- plot2 + coord_polar("y", start=0)
+```
+
+```{r}
+piecharts <- plot_grid(pie2,pie1, ncol = 2,  labels = c("B","C"))
+allplots <- plot_grid(bar,piecharts, nrow = 2, labels = "A")
+allplots
+```
+
+
+## New part of the EDA
+```{r, message=F}
+ggpairs(data, columns = c(20,21,3))
+```
+
+
+
+
