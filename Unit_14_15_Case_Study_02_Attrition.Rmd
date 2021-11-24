@@ -27,7 +27,7 @@ library(caret) #confusionMatrix
 library(e1071) #Naive Bayes
 ```
 
-
+## Reading dataset
 ```{r}
 df = read.csv(file.choose(),header = TRUE)
 summary(df)
