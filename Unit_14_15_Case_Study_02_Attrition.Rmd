@@ -1,0 +1,35 @@
+---
+title: 'Case Study 02: Attrition'
+author: "Shikha Pandey"
+date: "November 22, 2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Libraries
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(GGally)
+library(stringi)
+library(stringr)
+library(naniar)
+library(reshape2)
+library(class) #knn
+library(caret) #confusionMatrix
+library(e1071) #Naive Bayes
+```
+
+
+```{r}
+df = read.csv(file.choose(),header = TRUE)
+summary(df)
+str(df)
+```
