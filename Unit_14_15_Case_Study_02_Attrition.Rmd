@@ -11,25 +11,103 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Loading Libraries
+## Load Libraries
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
-library(dplyr)
-library(tidyr)
+#library(dplyr)
+#library(tidyr)
 library(tidyverse)
-library(ggplot2)
+#library(ggplot2)
 library(GGally)
 library(stringi)
 library(stringr)
 library(naniar)
 library(reshape2)
+library(cowplot)
+library(skimr) #for data summary
 library(class) #knn
 library(caret) #confusionMatrix
 library(e1071) #Naive Bayes
 ```
 
-## Reading dataset
+## Load the data
 ```{r}
 df = read.csv(file.choose(),header = TRUE)
-summary(df)
 str(df)
+skim(df)
+# The dataset has 870 observations (rows) and 36 variables (columns).
 ```
+
+## Investigate missing values in each column
+```{r}
+#Looking for missing values in dataset
+gg_miss_var(df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
+#legend.position = "none", 
+#sapply(df, function(x) sum(is.na(x)))
+# No missing values are found for any variables (columns) in the dataset.
+stats(df, "Attrition")
+```
+
+## Drop unnecessary columns
+```{r}
+# We see from the results of str() and skim() that some columns either have no variation in their data or they are irrelevant to be used for Exploratory Data Analysis (EDA) for Attrition.
+# Over18 has all 870 observations with value Y, EmployeeCount has all 870 observations with value 1, StandardHours has all 870 observations with value 80. So, with no variation in data, we decided to drop there columns from the dataset.
+# Data in columns ID and EmployeeNumber is irrelevant to be used for Exploratory Data Analysis (EDA) for Attrition, so, we will drop these columns as well.
+df <- select(df, -c("Over18","EmployeeCount","StandardHours","ID","EmployeeNumber"))
+skim(df)
+```
+
+# Exploratory Data Analysis (EDA)
+
+## Attrition based on Monthly Income
+```{r}
+# Let's start with looking at distribution of Monthly Income 
+hist(df$MonthlyIncome, breaks = 10, col = "orange", xlab = "Monthly Income", main = "Histogram for Monthly Income")
+# Look at the minimum and maximum salary in the dataset.
+range(df$MonthlyIncome)
+# We see from the histogram that most number of employees have salary in range 2000-4000 and then second highest range is 4000-6000. Let's create income groups and look at Attrition for those income groups.
+df$IncomeGroup <- cut(df$MonthlyIncome, breaks = c(0, 2000, 4000, 6000, 10000, 15000, 20000), labels = c("<$2000","$2000-$4000","$4000-$6000","$6000-$10000","$10000-$15000","$15000-$20000"))
+
+df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Income Group", y = "Percent Employees", title = "Attriton for Income Groups") + theme(plot.title = element_text(hjust = 0.5))
+# Lowest Income Group (<$2000) has the highest Attrition rate, followed by second lowest Income Group ($2000-$4000).
+```
+
+## Attrition based on Age
+```{r}
+# Let's look at age distribution of employees in dataset.
+hist(df$Age, breaks = 10, col = "orange", xlab = "Age", main = "Histogram for Employee Ages")
+# Histogram shows normal distribution with most employees between ages of 25 and 40.
+# Now, let's find out the age range in dataset.
+range(df$Age)
+# Employees in this dataset are 18 to 60 years old.
+# Let's create age groups and look at Attrition for those age groups.
+df$AgeGroup <- cut(df$Age, breaks = c(18,25,35,45,60), labels = c("18-25","25-35","35-45","45-60"), include.lowest = TRUE)
+
+df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Age Group", y = "Percent Employees", title = "Attriton for Age Groups") + theme(plot.title = element_text(hjust = 0.5))
+# Younger age groups 18-25 and 25-35 have higher attrition rate.
+```
+
+## Attrition based on Job Role
+```{r}
+df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attriton for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = function(x) str_wrap(x, width = 12))
+# Research Directors have highest attrition rate whereas Sales Representatives have the least. 
+```
+
+## Attrition based on Gender
+```{r}
+df %>% ggplot(aes_string(x = "Gender", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Gender", y = "Percent Employees", title = "Attriton for Gender") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Attrition based on Overtime
+```{r}
+df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Overtime", y = "Percent Employees", title = "Attriton for Overtime") + theme(plot.title = element_text(hjust = 0.5))
+# Higher attrition rate for employees who work overtime
+```
+
+## Attrition based on Job Satisfaction
+```{r}
+df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Satisfaction", y = "Percent Employees", title = "Attriton for Job Satisfaction") + theme(plot.title = element_text(hjust = 0.5))
+# We see that attrition level goes down with higher Job Satisfaction.
+```
+
+
+
