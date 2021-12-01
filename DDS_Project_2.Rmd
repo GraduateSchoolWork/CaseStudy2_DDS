@@ -18,13 +18,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(GGally)
 library(cowplot)
+library(class)
+library(caret)
+library(e1071)
 ```
 
 
 # Load and look at the data
 ```{r}
-data <- read.csv("CaseStudy2-data.csv", header = T)
-str(data)
+attrition.df <- read.csv("CaseStudy2-data.csv", header = T)
+str(attrition.df)
 ```
 
 
@@ -32,7 +35,7 @@ str(data)
 ## Attrition Dependent on Marital Status
 ```{r}
 # divorce contribute to attrition
-bar <- ggplot(data, aes(x=MaritalStatus, fill = MaritalStatus)) +
+bar <- ggplot(attrition.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
   geom_bar() +
   facet_wrap(~Attrition) +
   ggtitle("Attrition Dependent on Marital Status ") +
@@ -44,7 +47,7 @@ bar <- ggplot(data, aes(x=MaritalStatus, fill = MaritalStatus)) +
 ```{r}
 # Yes Attrition
 # make new data frames for married, divorced, and single
-df1 <- data %>%
+df1 <- attrition.df %>%
   filter(Attrition == "Yes")
 df1length <- NROW(df1)
 df1married <- length(grep("Married", df1$MaritalStatus))
@@ -62,7 +65,7 @@ pie1 <- plot1 + coord_polar("y", start=0)
 ```{r}
 # No Attrition
 # make new data frames for married, divorced, and single
-df2 <- data %>%
+df2 <- attrition.df %>%
   filter(Attrition == "No")
 df2length <- NROW(df2)
 df2married <- length(grep("Married", df2$MaritalStatus))
@@ -86,19 +89,19 @@ allplots
 
 ## New part of the EDA
 ```{r, message=F}
-ggpairs(data, columns = c(20,21,3))
+ggpairs(attrition.df, columns = c(20,21,3))
 ```
 
 
 ## New EDA
 ```{r}
-ggplot(data, aes(x=Attrition, y=JobSatisfaction)) +
-  geom_jitter(height = 0.2, width = 0.2)
+ggplot(attrition.df, aes(x=Attrition, y=JobSatisfaction)) +
+  geom_jitter(height = 0.2, width = 0.20)
 ```
 
 ## New EDA
 ```{r}
-ggplot(data, aes(x=MonthlyIncome, fill = Attrition)) +
+ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
   facet_wrap(~Attrition) +
   ggtitle("Monthly Income Based on Attrition") +
@@ -107,4 +110,85 @@ ggplot(data, aes(x=MonthlyIncome, fill = Attrition)) +
 ```
 
 
+## New EDA
+```{r}
+ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
+  geom_histogram() +
+  facet_wrap(~JobRole) +
+  ggtitle("Monthly Income Based on Job Role") +
+  xlab("Monthly Income") +
+  ylab("Count")
+```
 
+## New EDA
+```{r}
+ggplot(attrition.df, aes(x=PerformanceRating, fill = Attrition)) +
+  geom_bar(position = "stack") +
+  facet_wrap(~JobRole) +
+  ggtitle("Performance Rating Based on Job Role") +
+  xlab("Performance Rating") +
+  ylab("Count")
+```
+
+## New EDA
+```{r}
+ggplot(attrition.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attrition)) +
+  geom_point() +
+  ggtitle("Total Working Years vs Percent Salary Hike") +
+  xlab("Total Working Years") +
+  ylab("Percent Salary Hike") +
+  facet_wrap(~JobRole)
+```
+
+# Models
+```{r}
+splitPerc <- .7
+trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
+dfTrain <- attrition.df[trainIndices,]
+dfTest <- attrition.df[-trainIndices,]
+dfTrain <- na.omit(dfTrain)
+dfTest <- na.omit(dfTest)
+
+#knn model
+classifications <- knn(dfTrain[,c(25,30)], dfTest[,c(25,30)], dfTrain$Attrition, 
+                       prob = TRUE, k = 20)
+table(dfTest$Attrition,classifications)
+confusionMatrix(table(dfTest$Attrition,classifications))
+```
+
+# Loop for many k
+```{r}
+#Loop for many k and the average of many training / test partition
+iterations = 100
+numks = 50
+
+masterAcc = matrix(nrow = iterations, ncol = numks)
+
+for(j in 1:iterations)
+{
+  accs = data.frame(accuracy = numeric(100), k = numeric(100))
+  trainIndices = sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
+  train = attrition.df[trainIndices,]
+  test = attrition.df[-trainIndices,]
+  train = na.omit(train)
+  test = na.omit(test)
+  for(i in 1:numks)
+  {
+    classifications = knn(train[,c(25,30)],test[,c(25,30)],train$Attrition, prob = TRUE, k = i)
+    table(classifications,test$Attrition)
+    CM = confusionMatrix(table(classifications,test$Attrition))
+    masterAcc[j,i] = CM$overall[1]
+  }
+  
+}
+
+MeanAcc = colMeans(masterAcc)
+
+plot(seq(1,numks,1),MeanAcc, type = "l", xlab = "k", ylab = "Mean Accuracy", main = "Mean Accuracy of k Values")
+```
+
+# Internal k-NN Model
+```{r}
+classifications1 <- knn.cv(dfTrain[,c(8,18)],dfTrain$Attrition, k = 10)
+confusionMatrix(table(classifications1,dfTrain$Attrition))
+```
