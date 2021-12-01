@@ -13,10 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load Libraries
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
-#library(dplyr)
-#library(tidyr)
 library(tidyverse)
-#library(ggplot2)
 library(GGally)
 library(stringi)
 library(stringr)
@@ -41,10 +38,7 @@ skim(df)
 ```{r}
 #Looking for missing values in dataset
 gg_miss_var(df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
-#legend.position = "none", 
-#sapply(df, function(x) sum(is.na(x)))
 # No missing values are found for any variables (columns) in the dataset.
-stats(df, "Attrition")
 ```
 
 ## Drop unnecessary columns
@@ -55,6 +49,7 @@ stats(df, "Attrition")
 df <- select(df, -c("Over18","EmployeeCount","StandardHours","ID","EmployeeNumber"))
 skim(df)
 ```
+
 
 # Exploratory Data Analysis (EDA)
 
@@ -107,6 +102,11 @@ df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + geom_bar(positio
 ```{r}
 df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Satisfaction", y = "Percent Employees", title = "Attriton for Job Satisfaction") + theme(plot.title = element_text(hjust = 0.5))
 # We see that attrition level goes down with higher Job Satisfaction.
+```
+
+## Attrition based on Hourly Rate, Daily Rate, Monthly Rate, Monthly Income
+```{r}
+ggpairs(data = df, mapping = aes(color = Attrition), columns = c("HourlyRate","DailyRate","MonthlyRate","MonthlyIncome"))
 ```
 
 
