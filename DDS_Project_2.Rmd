@@ -90,5 +90,21 @@ ggpairs(data, columns = c(20,21,3))
 ```
 
 
+## New EDA
+```{r}
+ggplot(data, aes(x=Attrition, y=JobSatisfaction)) +
+  geom_jitter(height = 0.2, width = 0.2)
+```
+
+## New EDA
+```{r}
+ggplot(data, aes(x=MonthlyIncome, fill = Attrition)) +
+  geom_histogram() +
+  facet_wrap(~Attrition) +
+  ggtitle("Monthly Income Based on Attrition") +
+  xlab("Monthly Income") +
+  ylab("Count")
+```
+
 
 
