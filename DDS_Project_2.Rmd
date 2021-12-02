@@ -123,11 +123,12 @@ ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
 ## New EDA
 ```{r}
 ggplot(attrition.df, aes(x=PerformanceRating, fill = Attrition)) +
-  geom_bar(position = "stack") +
+  geom_bar(position = "fill") +
   facet_wrap(~JobRole) +
   ggtitle("Performance Rating Based on Job Role") +
   xlab("Performance Rating") +
-  ylab("Count")
+  ylab("Count") + 
+  scale_y_continuous(labels = scales::percent)
 ```
 
 ## New EDA
@@ -189,6 +190,59 @@ plot(seq(1,numks,1),MeanAcc, type = "l", xlab = "k", ylab = "Mean Accuracy", mai
 
 # Internal k-NN Model
 ```{r}
-classifications1 <- knn.cv(dfTrain[,c(8,18)],dfTrain$Attrition, k = 10)
+classifications1 <- knn.cv(dfTrain[,c(2,20)],dfTrain$Attrition, k = 10)
 confusionMatrix(table(classifications1,dfTrain$Attrition))
+```
+
+
+## New EDA
+```{r}
+ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
+  geom_point() +
+  facet_wrap(~JobRole)
+```
+
+
+```{r}
+sales.df <- attrition.df %>%
+  filter(JobRole == "Research Scientist")
+
+ggplot(sales.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
+  geom_point()
+
+classifications2 <- knn.cv(sales.df[,c(2,20)],sales.df$Attrition, k = 15)
+confusionMatrix(table(classifications2,sales.df$Attrition))
+```
+
+
+
+# Naive Bayes
+```{r}
+model <- naiveBayes(dfTrain[,c(24,20)],dfTrain$Attrition,laplace = 1)
+table(predict(model,dfTest[,c(24,20)]),dfTest$Attrition)
+confusionMatrix(table(predict(model,dfTest[,c(24,20)]),dfTest$Attrition))
+
+model = naiveBayes(Attrition~.,data = dfTrain)
+table(predict(model,dfTest))
+confusionMatrix(table(predict(model,dfTest),dfTest$Attrition))
+```
+
+```{r}
+sum(grepl("No", attrition.df$Attrition))
+sum(grepl("Yes", dfTest$Attrition))
+```
+
+
+```{r}
+set.seed(9)
+new.df <- attrition.df[,c(2,3,4,5,6,7,15,16,18,20,29,30,32,33,34,35)]
+splitPerc <- .7
+trainIndices <- sample(1:dim(new.df)[1],round(splitPerc * dim(new.df)[1]))
+dfTrain1 <- new.df[trainIndices,]
+dfTest1 <- new.df[-trainIndices,]
+dfTrain1 <- na.omit(dfTrain1)
+dfTest1 <- na.omit(dfTest1)
+
+model1 = naiveBayes(Attrition~.,data = dfTrain1)
+confusionMatrix(table(predict(model1,dfTest1),dfTest1$Attrition))
 ```
