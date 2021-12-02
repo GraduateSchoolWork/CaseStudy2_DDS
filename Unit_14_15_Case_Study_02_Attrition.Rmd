@@ -98,7 +98,7 @@ df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(
 # We see that attrition level goes down with higher Job Satisfaction.
 ```
 
-## Attrition based on Hourly Rate, Daily Rate, Monthly Rate, Monthly Income.
+## Attrition based on Hourly Rate, Daily Rate, Monthly Rate, Monthly Income
 ```{r}
 ggpairs(data = df, mapping = aes(color = Attrition), columns = c("HourlyRate","DailyRate","MonthlyRate","MonthlyIncome"))
 ```
