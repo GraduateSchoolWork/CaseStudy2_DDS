@@ -2,7 +2,10 @@
 title: 'Case Study 02: Attrition'
 author: "Shikha Pandey"
 date: "November 22, 2021"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
 editor_options: 
   chunk_output_type: console
 ---
@@ -41,15 +44,6 @@ gg_miss_var(df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(p
 # No missing values are found for any variables (columns) in the dataset.
 ```
 
-## Drop unnecessary columns
-```{r}
-# We see from the results of str() and skim() that some columns either have no variation in their data or they are irrelevant to be used for Exploratory Data Analysis (EDA) for Attrition.
-# Over18 has all 870 observations with value Y, EmployeeCount has all 870 observations with value 1, StandardHours has all 870 observations with value 80. So, with no variation in data, we decided to drop there columns from the dataset.
-# Data in columns ID and EmployeeNumber is irrelevant to be used for Exploratory Data Analysis (EDA) for Attrition, so, we will drop these columns as well.
-df <- select(df, -c("Over18","EmployeeCount","StandardHours","ID","EmployeeNumber"))
-skim(df)
-```
-
 
 # Exploratory Data Analysis (EDA)
 
@@ -83,7 +77,7 @@ df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) + geom_bar(positio
 
 ## Attrition based on Job Role
 ```{r}
-df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attriton for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = function(x) str_wrap(x, width = 12))
+df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attriton for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + coord_flip() + scale_x_discrete(labels = function(x) str_wrap(x, width = 12))
 # Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 ```
 
@@ -109,5 +103,46 @@ df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(
 ggpairs(data = df, mapping = aes(color = Attrition), columns = c("HourlyRate","DailyRate","MonthlyRate","MonthlyIncome"))
 ```
 
+## Attrition based on Business Travel
+```{r}
+df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Business Travel", y = "Percent Employees", title = "Attriton for Business Travel") + theme(plot.title = element_text(hjust = 0.5))
+# Attrition level goes up from Non-Travel to Travel-Frequently category.
+```
 
 
+# Models
+
+
+## Naive Bayes
+```{r}
+set.seed(9)
+#new.df <- df[,c(2,3,6,12,15,16,17,18,19,20,22,24,29,30,32,33,34,36)] # OR could be used as below
+new.df <- select(df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+splitPerc <- .85
+trainIndices <- sample(1:dim(new.df)[1],round(splitPerc * dim(new.df)[1]))
+dfTrain1 <- new.df[trainIndices,]
+dfTest1 <- new.df[-trainIndices,]
+
+model1 = naiveBayes(Attrition~.,data = dfTrain1)
+confusionMatrix(table(predict(model1,dfTest1),dfTest1$Attrition))
+```
+
+
+## K-NN - !!!!!!! NOT WORKING !!!!!!!
+```{r}
+set.seed(50)
+knn.df <- select(df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+knn.df$Department = as.numeric(knn.df$Department)
+knn.df$JobRole = as.numeric(knn.df$JobRole)
+knn.df$MaritalStatus = as.numeric(knn.df$MaritalStatus)
+knn.df$OverTime = as.numeric(knn.df$OverTime)
+
+KNNsplitPerc = .65
+
+KNNtrainIndices = sample(1:dim(knn.df)[1],round(KNNsplitPerc * dim(knn.df)[1]))
+KNNtrain = knn.df[KNNtrainIndices,]
+KNNtest = knn.df[-KNNtrainIndices,]
+
+KNNclassifications = knn(KNNtrain[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)],KNNtest[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)],KNNtrain$Attrition, prob = TRUE, k = 7)
+confusionMatrix(table(KNNclassifications,KNNtest$Attrition))
+```
