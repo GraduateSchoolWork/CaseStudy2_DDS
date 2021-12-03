@@ -31,7 +31,7 @@ library(e1071) #Naive Bayes
 
 ## Load the data
 ```{r}
-df = read.csv(file.choose(),header = TRUE)
+df = read.csv("CaseStudy2-data.csv",header = TRUE)
 str(df)
 skim(df)
 # The dataset has 870 observations (rows) and 36 variables (columns).
@@ -146,3 +146,25 @@ KNNtest = knn.df[-KNNtrainIndices,]
 KNNclassifications = knn(KNNtrain[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)],KNNtest[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)],KNNtrain$Attrition, prob = TRUE, k = 7)
 confusionMatrix(table(KNNclassifications,KNNtest$Attrition))
 ```
+
+
+## Linear Regression
+```{r}
+set.seed(9)
+#LR.df <- select(df, "Age", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears")
+# "Age", "Attrition", "MaritalStatus", "StockOptionLevel", "OverTime", "JobSatisfaction", "EnvironmentSatisfaction", 
+# "NumCompaniesWorked", "YearsAtCompany", 
+LR.df <- select(df, "Department", "JobInvolvement", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears", "WorkLifeBalance", "YearsInCurrentRole", "YearsWithCurrManager")
+LRsplitPerc <- .90
+LRtrainIndices <- sample(1:dim(LR.df)[1],round(LRsplitPerc * dim(LR.df)[1]))
+LRTrain <- LR.df[LRtrainIndices,]
+LRTest <- LR.df[-LRtrainIndices,]
+
+fit = lm(MonthlyIncome ~ ., data = LRTrain)
+summary(fit)
+
+pred = predict(fit, LRTest)
+RMSE = sqrt(mean((LRTest$MonthlyIncome - pred)^2))
+RMSE
+```
+

@@ -191,6 +191,7 @@ pre code {
 <ul>
 <li><a href="#naive-bayes">Naive Bayes</a></li>
 <li><a href="#k-nn---not-working">K-NN - !!!!!!! NOT WORKING !!!!!!!</a></li>
+<li><a href="#linear-regression">Linear Regression</a></li>
 </ul></li>
 </ul>
 </div>
@@ -211,7 +212,7 @@ library(e1071) #Naive Bayes</code></pre>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the data</h2>
-<pre class="r"><code>df = read.csv(file.choose(),header = TRUE)
+<pre class="r"><code>df = read.csv(&quot;CaseStudy2-data.csv&quot;,header = TRUE)
 str(df)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    870 obs. of  36 variables:
 ##  $ ID                      : int  1 2 3 4 5 6 7 8 9 10 ...
@@ -916,6 +917,58 @@ confusionMatrix(table(KNNclassifications,KNNtest$Attrition))</code></pre>
 ##                                           
 ##        &#39;Positive&#39; Class : No              
 ## </code></pre>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<pre class="r"><code>set.seed(9)
+#LR.df &lt;- select(df, &quot;Age&quot;, &quot;JobLevel&quot;, &quot;JobRole&quot;, &quot;MonthlyIncome&quot;, &quot;TotalWorkingYears&quot;)
+# &quot;Age&quot;, &quot;Attrition&quot;, &quot;MaritalStatus&quot;, &quot;StockOptionLevel&quot;, &quot;OverTime&quot;, &quot;JobSatisfaction&quot;, &quot;EnvironmentSatisfaction&quot;, 
+# &quot;NumCompaniesWorked&quot;, &quot;YearsAtCompany&quot;, 
+LR.df &lt;- select(df, &quot;Department&quot;, &quot;JobInvolvement&quot;, &quot;JobLevel&quot;, &quot;JobRole&quot;, &quot;MonthlyIncome&quot;, &quot;TotalWorkingYears&quot;, &quot;WorkLifeBalance&quot;, &quot;YearsInCurrentRole&quot;, &quot;YearsWithCurrManager&quot;)
+LRsplitPerc &lt;- .90
+LRtrainIndices &lt;- sample(1:dim(LR.df)[1],round(LRsplitPerc * dim(LR.df)[1]))
+LRTrain &lt;- LR.df[LRtrainIndices,]
+LRTest &lt;- LR.df[-LRtrainIndices,]
+
+fit = lm(MonthlyIncome ~ ., data = LRTrain)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = MonthlyIncome ~ ., data = LRTrain)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3993.8  -654.5    -8.7   616.8  4114.1 
+## 
+## Coefficients:
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                        53.747    570.856   0.094   0.9250    
+## DepartmentResearch &amp; Development  108.730    454.426   0.239   0.8110    
+## DepartmentSales                  -366.394    457.798  -0.800   0.4238    
+## JobInvolvement                      9.062     56.199   0.161   0.8719    
+## JobLevel                         2754.809     88.382  31.169  &lt; 2e-16 ***
+## JobRoleHuman Resources           -319.620    535.675  -0.597   0.5509    
+## JobRoleLaboratory Technician     -746.910    183.756  -4.065 5.31e-05 ***
+## JobRoleManager                   4135.328    304.107  13.598  &lt; 2e-16 ***
+## JobRoleManufacturing Director      66.849    177.661   0.376   0.7068    
+## JobRoleResearch Director         3996.234    232.823  17.164  &lt; 2e-16 ***
+## JobRoleResearch Scientist        -444.594    183.289  -2.426   0.0155 *  
+## JobRoleSales Executive            347.075    380.212   0.913   0.3616    
+## JobRoleSales Representative      -116.706    415.680  -0.281   0.7790    
+## TotalWorkingYears                  51.160      9.118   5.611 2.81e-08 ***
+## WorkLifeBalance                   -30.013     54.576  -0.550   0.5825    
+## YearsInCurrentRole                 10.619     16.011   0.663   0.5074    
+## YearsWithCurrManager              -24.114     15.792  -1.527   0.1272    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1080 on 766 degrees of freedom
+## Multiple R-squared:  0.9467, Adjusted R-squared:  0.9456 
+## F-statistic: 850.1 on 16 and 766 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>pred = predict(fit, LRTest)
+RMSE = sqrt(mean((LRTest$MonthlyIncome - pred)^2))
+RMSE</code></pre>
+<pre><code>## [1] 904.7387</code></pre>
 </div>
 </div>
 
