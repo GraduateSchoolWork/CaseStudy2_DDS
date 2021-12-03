@@ -275,7 +275,7 @@ summary(fit2)
 ```
 
 
-# Train and Test for Linear Regression
+# Train and Test for Linear Regression Attrition
 ```{r}
 splitPerc <- .7
 trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
@@ -284,6 +284,7 @@ dfTest <- attrition.df[-trainIndices,]
 dfTrain <- na.omit(dfTrain)
 dfTest <- na.omit(dfTest)
 
+# Best LM model for Attrition
 Model1_fit = lm(Attrition~Age*MonthlyIncome, data = dfTrain)
 summary(Model1_fit)
 Model1_Preds = predict(Model1_fit, newdata = dfTest)
@@ -298,3 +299,64 @@ RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
 RMSE
 ```
 
+
+
+
+
+# Linear Regression for Salary
+```{r}
+noSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
+head(noSalary)
+```
+
+# Best Linear Regression Model!!!!
+```{r}
+attrition.df$JobLevel <- gsub(1, "1", attrition.df$JobLevel)
+attrition.df$JobLevel <- gsub(2, "2", attrition.df$JobLevel)
+attrition.df$JobLevel <- gsub(3, "3", attrition.df$JobLevel)
+attrition.df$JobLevel <- gsub(4, "4", attrition.df$JobLevel)
+attrition.df$JobLevel <- gsub(5, "5", attrition.df$JobLevel)
+attrition.df$JobLevel <- as.character(attrition.df$JobLevel)
+
+# not as good
+Model1_fit = lm(MonthlyIncome~JobLevel+JobRole, data = dfTrain)
+summary(Model1_fit)
+
+# best !!!
+Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
+summary(Model2_fit)
+
+hist(Model2_fit$residuals, col = "blue", main = "Histogram of Residuals")
+
+sqrt(sum((Model1_fit$residuals)^2))
+sqrt(sum((Model2_fit$residuals)^2))
+
+# better
+Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole+JobSatisfaction, data = dfTrain)
+summary(Model2_fit)
+
+
+Model2_Preds = predict(Model2_fit, newdata = dfTest)
+as.data.frame(Model2_Preds)
+
+MSPE = data.frame(Observed = dfTest$MonthlyIncome, Predicted = Model2_Preds)
+MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
+MSPE$SquaredResidual = MSPE$Resisdual^2
+MSPE
+mean(MSPE$SquaredResidual)
+RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
+RMSE
+
+
+```
+
+
+
+
+
+
+```{r}
+ggplot(attrition.df, aes(x=PerformanceRating, y=MonthlyIncome)) +
+  geom_point() +
+  coord_flip()
+```
