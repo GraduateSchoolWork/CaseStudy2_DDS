@@ -21,6 +21,8 @@ library(cowplot)
 library(class)
 library(caret)
 library(e1071)
+library(reshape2)
+library(stringr)
 ```
 
 
@@ -246,3 +248,53 @@ dfTest1 <- na.omit(dfTest1)
 model1 = naiveBayes(Attrition~.,data = dfTrain1)
 confusionMatrix(table(predict(model1,dfTest1),dfTest1$Attrition))
 ```
+
+
+# Linear Regression
+```{r}
+attrition.df$Attrition <- gsub("Yes", 1, attrition.df$Attrition)
+attrition.df$Attrition <- gsub("No", 0, attrition.df$Attrition)
+attrition.df$Attrition <- as.numeric(attrition.df$Attrition)
+fit = lm(Attrition~Age*MonthlyIncome, data = attrition.df)
+summary(fit)
+confint(fit)
+fit$coefficients
+fit$residuals
+sqrt(mean(fit$residuals^2))
+sum((fit$residuals)^2)
+sum((fit1$residuals)^2)
+sum((fit2$residuals)^2)
+```
+
+```{r}
+fit1 = lm(Attrition~Age+MonthlyIncome, data = attrition.df)
+fit2 = lm(Attrition~MonthlyIncome, data = attrition.df)
+hist(fit$residuals, col = "blue", main = "Histogram of Residuals")
+summary(fit1)
+summary(fit2)
+```
+
+
+# Train and Test for Linear Regression
+```{r}
+splitPerc <- .7
+trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
+dfTrain <- attrition.df[trainIndices,]
+dfTest <- attrition.df[-trainIndices,]
+dfTrain <- na.omit(dfTrain)
+dfTest <- na.omit(dfTest)
+
+Model1_fit = lm(Attrition~Age*MonthlyIncome, data = dfTrain)
+summary(Model1_fit)
+Model1_Preds = predict(Model1_fit, newdata = dfTest)
+as.data.frame(Model1_Preds)
+
+MSPE = data.frame(Observed = dfTest$Attrition, Predicted = Model1_Preds)
+MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
+MSPE$SquaredResidual = MSPE$Resisdual^2
+MSPE
+mean(MSPE$SquaredResidual)
+RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
+RMSE
+```
+
