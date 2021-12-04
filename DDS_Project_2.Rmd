@@ -145,6 +145,7 @@ ggplot(attrition.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attri
 
 # Models
 ```{r}
+set.seed(9)
 splitPerc <- .7
 trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
 dfTrain <- attrition.df[trainIndices,]
@@ -319,12 +320,65 @@ attrition.df$JobLevel <- gsub(5, "5", attrition.df$JobLevel)
 attrition.df$JobLevel <- as.character(attrition.df$JobLevel)
 
 # not as good
-Model1_fit = lm(MonthlyIncome~JobLevel+JobRole, data = dfTrain)
+Model1_fit = lm(MonthlyIncome~JobLevel, data = attrition.df)
 summary(Model1_fit)
+preds <- predict(Model1_fit)
+hist(Model1_fit$residuals, col = "blue", main = "Histogram of Residuals")
+plot(Model1_fit$fitted.values,Model1_fit$residuals, main = "Plot of Residuals v. Fitted Values")
+attrition.df %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attrition.df, aes(x = JobLevel, y = preds, col = "red"))
+
+test1 <- predict(Model1_fit, noSalary, interval = "confidence") 
+test1 <- as.data.frame(test1)
+noSalary$MonthlyIncome <- test1[,1]
+noSalary %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = MonthlyIncome, col = "red"))
+
+# Good Exponential Model 
+attriton.df2 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2))
+fit = lm(MonthlyIncome~JobLevel+JobLevel2, attriton.df2)
+summary(fit)
+preds2 <- predict(fit)
+hist(fit$residuals, col = "blue", main = "Histogram of Residuals")
+plot(fit$fitted.values,fit$residuals, main = "Plot of Residuals v. Fitted Values")
+attriton.df2 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df2, aes(x = JobLevel, y = preds, col = "red"))
+
+noSalary <- noSalary %>% mutate(JobLevel2 = (JobLevel^2))
+test2 <- predict(fit, noSalary, interval = "confidence") 
+test2 <- as.data.frame(test2)
+noSalary$Salary <- test2[,1]
+noSalary %>% ggplot(aes(x = JobLevel, y = Salary)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = Salary , col = "red"))
+
+# Adding extra exponential variable helped
+attriton.df3 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2), 
+                                       JobLevel3 = (JobLevel^3))
+fit2 = lm(MonthlyIncome~JobLevel+JobLevel2+JobLevel3, attriton.df3)
+summary(fit2)
+preds2 <- predict(fit2)
+hist(fit2$residuals, col = "blue", main = "Histogram of Residuals")
+plot(fit2$fitted.values,fit2$residuals, main = "Plot of Residuals v. Fitted Values")
+attriton.df3 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df3, aes(x = JobLevel, y = preds2, col = "red"))
+
+
+noSalary <- noSalary %>% mutate(JobLevel3 = (JobLevel^3))
+test3 <- predict(fit2, noSalary, interval = "confidence") 
+test3 <- as.data.frame(test3)
+noSalary$Salary2 <- test3[,1]
+noSalary %>% ggplot(aes(x = JobLevel, y = Salary2)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = Salary2 , col = "red"))
+
+# Adding extra exponential variable hurt
+attriton.df4 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2), 
+                                       JobLevel3 = (JobLevel^3), 
+                                       JobLevel4 = (JobLevel^4))
+fit3 = lm(MonthlyIncome~JobLevel+JobLevel2+JobLevel3+JobLevel4, attriton.df4)
+summary(fit3)
+preds3 <- predict(fit3)
+hist(fit3$residuals, col = "blue", main = "Histogram of Residuals")
+plot(fit3$fitted.values,fit3$residuals, main = "Plot of Residuals v. Fitted Values")
+attriton.df4 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df4, aes(x = JobLevel, y = preds3, col = "red"))
 
 # best !!!
 Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
 summary(Model2_fit)
+preds <- predict(Model2_fit)
 
 hist(Model2_fit$residuals, col = "blue", main = "Histogram of Residuals")
 
