@@ -30,10 +30,12 @@ library(stringr)
 ```{r}
 attrition.df <- read.csv("CaseStudy2-data.csv", header = T)
 str(attrition.df)
+noSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
+str(noSalary)
 ```
 
 
-# EDA
+# Attrition EDA
 ## Attrition Dependent on Marital Status
 ```{r}
 # divorce contribute to attrition
@@ -43,10 +45,7 @@ bar <- ggplot(attrition.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
   ggtitle("Attrition Dependent on Marital Status ") +
   xlab("Attrition") +
   ylab("Count")
-```
 
-
-```{r}
 # Yes Attrition
 # make new data frames for married, divorced, and single
 df1 <- attrition.df %>%
@@ -62,9 +61,7 @@ Yes_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"),
 plot1 <- ggplot(Yes_df, aes(x="", y=Value, fill=MaritalStatus)) +
   geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: Yes")
 pie1 <- plot1 + coord_polar("y", start=0)
-```
 
-```{r}
 # No Attrition
 # make new data frames for married, divorced, and single
 df2 <- attrition.df %>%
@@ -80,39 +77,24 @@ No_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"),
 plot2 <- ggplot(No_df, aes(x="", y=Value, fill=MaritalStatus)) +
   geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: No")
 pie2 <- plot2 + coord_polar("y", start=0)
-```
 
-```{r}
 piecharts <- plot_grid(pie2,pie1, ncol = 2,  labels = c("B","C"))
 allplots <- plot_grid(bar,piecharts, nrow = 2, labels = "A")
 allplots
 ```
 
 
-## New part of the EDA
-```{r, message=F}
-ggpairs(attrition.df, columns = c(20,21,3))
-```
-
-
-## New EDA
-```{r}
-ggplot(attrition.df, aes(x=Attrition, y=JobSatisfaction)) +
-  geom_jitter(height = 0.2, width = 0.20)
-```
-
-## New EDA
+## Monthly Income
 ```{r}
 ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
-  facet_wrap(~Attrition) +
   ggtitle("Monthly Income Based on Attrition") +
   xlab("Monthly Income") +
   ylab("Count")
 ```
 
 
-## New EDA
+## Monthly Income Based on Job Role
 ```{r}
 ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
@@ -122,47 +104,147 @@ ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   ylab("Count")
 ```
 
-## New EDA
+## Percentage of Attrition Based on Multiple Variables
 ```{r}
-ggplot(attrition.df, aes(x=PerformanceRating, fill = Attrition)) +
+EDA1 <- ggplot(attrition.df, aes(x=RelationshipSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
-  facet_wrap(~JobRole) +
-  ggtitle("Performance Rating Based on Job Role") +
-  xlab("Performance Rating") +
-  ylab("Count") + 
-  scale_y_continuous(labels = scales::percent)
+  #facet_wrap(~JobRole) +
+  ggtitle("Relationship Satisfaction") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA2 <- ggplot(attrition.df, aes(x=JobLevel, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  #facet_wrap(~JobRole) +
+  ggtitle("Job Level") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA3 <- ggplot(attrition.df, aes(x=JobSatisfaction, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Job Satisfaction") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA4 <- ggplot(attrition.df, aes(x=YearsWithCurrManager, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Years With Current Manager") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA5 <- ggplot(attrition.df, aes(x=YearsSinceLastPromotion, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Years Since Last Promotion") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA6 <- ggplot(attrition.df, aes(x=YearsAtCompany, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Years At Company") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA7 <- ggplot(attrition.df, aes(x=YearsInCurrentRole, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Years in Current Role") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA8 <- ggplot(attrition.df, aes(x=NumCompaniesWorked, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Companies Worked") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA9 <- ggplot(attrition.df, aes(x=MaritalStatus, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  ggtitle("Marital Status") +
+  ylab("% Count") + 
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none")
+
+EDA10 <- plot_grid(EDA1,EDA2,EDA3,EDA4,EDA5,EDA6,EDA7,EDA8,EDA9, ncol = 3, nrow = 3)
+EDA10
 ```
 
-## New EDA
+## Scatter Plots with Continuous Variables
 ```{r}
-ggplot(attrition.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attrition)) +
+EDA.A <- ggplot(attrition.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Total Working Years vs Percent Salary Hike") +
-  xlab("Total Working Years") +
-  ylab("Percent Salary Hike") +
+  ggtitle("Total Working Years vs Percent Salary Hike")
+
+EDA.B <- ggplot(attrition.df, aes(x=YearsWithCurrManager, y=PercentSalaryHike, color = Attrition)) +
+  geom_point() +
+  ggtitle("Years With Current Manager vs Percent Salary Hike")
+
+EDA.C <-ggplot(attrition.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = Attrition)) +
+  geom_point() +
+  ggtitle("Years At Company vs Years In CurrentRole")
+
+EDA.D <- ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
+  geom_point() +
+  ggtitle("Age vs Monthly Income")
+
+EDA.E <- ggplot(attrition.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attrition)) +
+  geom_point() +
+  ggtitle("Age vs Job YearsSinceLastPromotion")
+
+EDA.F <- ggplot(attrition.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
+  geom_point() +
+  ggtitle("Age vs Percent Salary Hike")
+
+EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.D,EDA.E,EDA.F, ncol = 2, nrow = 3)
+EDA.G
+```
+
+## GGpairs Plots
+```{r, message=F}
+ggpairs(attrition.df, columns = c(2,25,35,36,3), aes(color = Attrition))
+```
+
+## Attrition Analysis by Job Role
+```{r}
+ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
+  geom_point() +
   facet_wrap(~JobRole)
 ```
 
-# Models
+
+
+# Models for Attrition
+## k-NN Model (Train and Test Sets)
+Conclusion: This model does not have enough "Yes" attrition data to be able to use. Internal may prove more able to handle this skewed data.
 ```{r}
 set.seed(9)
-splitPerc <- .7
+splitPerc <- .85
 trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
 dfTrain <- attrition.df[trainIndices,]
 dfTest <- attrition.df[-trainIndices,]
 dfTrain <- na.omit(dfTrain)
 dfTest <- na.omit(dfTest)
 
-#knn model
-classifications <- knn(dfTrain[,c(25,30)], dfTest[,c(25,30)], dfTrain$Attrition, 
-                       prob = TRUE, k = 20)
+# 2:Age, 18:JobSatisfaction, 20:MontlyIncome, 25:PercentSalaryHike, 
+# 30:TotalWorkingYears, 30:TotalworkingYears, 33:YearsAtCompany, 
+# 34:YearsInCurrentRole, 35:YearsSinceLastPromotion, 36:YearsWithCurrManager
+
+# knn model 
+classifications <- knn(dfTrain[,c(2,35)], dfTest[,c(2,35)], dfTrain$Attrition, 
+                       prob = TRUE, k = 10)
 table(dfTest$Attrition,classifications)
 confusionMatrix(table(dfTest$Attrition,classifications))
 ```
 
-# Loop for many k
+## Loop for many k
 ```{r}
-#Loop for many k and the average of many training / test partition
+# Loop for many k and the average of many training / test partition
 iterations = 100
 numks = 50
 
@@ -178,7 +260,7 @@ for(j in 1:iterations)
   test = na.omit(test)
   for(i in 1:numks)
   {
-    classifications = knn(train[,c(25,30)],test[,c(25,30)],train$Attrition, prob = TRUE, k = i)
+    classifications = knn(train[,c(2,35)],test[,c(2,35)],train$Attrition, prob = TRUE, k = i)
     table(classifications,test$Attrition)
     CM = confusionMatrix(table(classifications,test$Attrition))
     masterAcc[j,i] = CM$overall[1]
@@ -191,52 +273,29 @@ MeanAcc = colMeans(masterAcc)
 plot(seq(1,numks,1),MeanAcc, type = "l", xlab = "k", ylab = "Mean Accuracy", main = "Mean Accuracy of k Values")
 ```
 
-# Internal k-NN Model
+## Internal k-NN Model
 ```{r}
-classifications1 <- knn.cv(dfTrain[,c(2,20)],dfTrain$Attrition, k = 10)
+# Internal Model
+classifications1 <- knn.cv(dfTrain[,c(2,35)],dfTrain$Attrition, k = 20)
 confusionMatrix(table(classifications1,dfTrain$Attrition))
 ```
 
 
-## New EDA
+## Naive Bayes
 ```{r}
-ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
-  geom_point() +
-  facet_wrap(~JobRole)
+NBmodel <- naiveBayes(dfTrain[,c(24,20)],dfTrain$Attrition,laplace = 1)
+table(predict(NBmodel,dfTest[,c(24,20)]),dfTest$Attrition)
+confusionMatrix(table(predict(NBmodel,dfTest[,c(24,20)]),dfTest$Attrition))
+
+NBmodel1 = naiveBayes(Attrition~.,data = dfTrain)
+table(predict(NBmodel1,dfTest))
+confusionMatrix(table(predict(NBmodel1,dfTest),dfTest$Attrition))
 ```
 
 
+## New Dataframe for Multiple Varables in Models
 ```{r}
-sales.df <- attrition.df %>%
-  filter(JobRole == "Research Scientist")
-
-ggplot(sales.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
-  geom_point()
-
-classifications2 <- knn.cv(sales.df[,c(2,20)],sales.df$Attrition, k = 15)
-confusionMatrix(table(classifications2,sales.df$Attrition))
-```
-
-
-
-# Naive Bayes
-```{r}
-model <- naiveBayes(dfTrain[,c(24,20)],dfTrain$Attrition,laplace = 1)
-table(predict(model,dfTest[,c(24,20)]),dfTest$Attrition)
-confusionMatrix(table(predict(model,dfTest[,c(24,20)]),dfTest$Attrition))
-
-model = naiveBayes(Attrition~.,data = dfTrain)
-table(predict(model,dfTest))
-confusionMatrix(table(predict(model,dfTest),dfTest$Attrition))
-```
-
-```{r}
-sum(grepl("No", attrition.df$Attrition))
-sum(grepl("Yes", dfTest$Attrition))
-```
-
-
-```{r}
+# Make new dataframe and make train and test sets
 set.seed(9)
 new.df <- attrition.df[,c(2,3,4,5,6,7,15,16,18,20,29,30,32,33,34,35)]
 splitPerc <- .7
@@ -245,55 +304,64 @@ dfTrain1 <- new.df[trainIndices,]
 dfTest1 <- new.df[-trainIndices,]
 dfTrain1 <- na.omit(dfTrain1)
 dfTest1 <- na.omit(dfTest1)
+```
 
-model1 = naiveBayes(Attrition~.,data = dfTrain1)
-confusionMatrix(table(predict(model1,dfTest1),dfTest1$Attrition))
+## Run Model with New Datframe
+```{r}
+# Naive Bayes Model for New Dataframe
+new.dfmodel = naiveBayes(Attrition~.,data = dfTrain1)
+confusionMatrix(table(predict(new.dfmodel,dfTest1),dfTest1$Attrition))
 ```
 
 
 # Linear Regression
+## Attrition Linear Regression
+Not sure if this is actually correct to use for this kind of data
 ```{r}
-attrition.df$Attrition <- gsub("Yes", 1, attrition.df$Attrition)
-attrition.df$Attrition <- gsub("No", 0, attrition.df$Attrition)
-attrition.df$Attrition <- as.numeric(attrition.df$Attrition)
-fit = lm(Attrition~Age*MonthlyIncome, data = attrition.df)
-summary(fit)
-confint(fit)
-fit$coefficients
-fit$residuals
-sqrt(mean(fit$residuals^2))
-sum((fit$residuals)^2)
-sum((fit1$residuals)^2)
-sum((fit2$residuals)^2)
+# change attrition variable to numberic for use in linear regression model
+attrition.lm <- attrition.df
+attrition.lm$Attrition <- gsub("Yes", 1, attrition.lm$Attrition)
+attrition.lm$Attrition <- gsub("No", 0, attrition.lm$Attrition)
+attrition.lm$Attrition <- as.numeric(attrition.lm$Attrition)
+
+# run model
+attritionfit = lm(Attrition~Age*MonthlyIncome, data = attrition.lm)
+attritionfit1 = lm(Attrition~Age+MonthlyIncome, data = attrition.lm)
+attritionfit2 = lm(Attrition~MonthlyIncome, data = attrition.lm)
+attritionfit3 = lm(Attrition~Age, data = attrition.lm)
+
+# inormation about model
+summary(attritionfit)
+confint(attritionfit)
+attritionfit$coefficients
+hist(attritionfit$residuals, col = "blue", main = "Histogram of Residuals")
+sqrt(mean(attritionfit$residuals^2))
+sum((attritionfit$residuals)^2)
+```
+
+
+## Train and Test for Linear Regression Attrition
+```{r}
+set.seed(9)
+splitPerc <- .8
+trainIndices <- sample(1:dim(attrition.lm)[1],round(splitPerc * dim(attrition.lm)[1]))
+dfTrain2 <- attrition.lm[trainIndices,]
+dfTest2 <- attrition.lm[-trainIndices,]
+dfTrain2 <- na.omit(dfTrain2)
+dfTest2 <- na.omit(dfTest2)
 ```
 
 ```{r}
-fit1 = lm(Attrition~Age+MonthlyIncome, data = attrition.df)
-fit2 = lm(Attrition~MonthlyIncome, data = attrition.df)
-hist(fit$residuals, col = "blue", main = "Histogram of Residuals")
-summary(fit1)
-summary(fit2)
-```
-
-
-# Train and Test for Linear Regression Attrition
-```{r}
-splitPerc <- .7
-trainIndices <- sample(1:dim(attrition.df)[1],round(splitPerc * dim(attrition.df)[1]))
-dfTrain <- attrition.df[trainIndices,]
-dfTest <- attrition.df[-trainIndices,]
-dfTrain <- na.omit(dfTrain)
-dfTest <- na.omit(dfTest)
-
 # Best LM model for Attrition
-Model1_fit = lm(Attrition~Age*MonthlyIncome, data = dfTrain)
-summary(Model1_fit)
-Model1_Preds = predict(Model1_fit, newdata = dfTest)
-as.data.frame(Model1_Preds)
+LR.fit <- lm(Attrition~Age*MonthlyIncome, data = dfTrain2)
+summary(LR.fit)
+LR.Preds <- predict(LR.fit, newdata = dfTest2)
+as.data.frame(LR.Preds)
 
-MSPE = data.frame(Observed = dfTest$Attrition, Predicted = Model1_Preds)
-MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
-MSPE$SquaredResidual = MSPE$Resisdual^2
+# Metrics for model
+MSPE <- data.frame(Observed = dfTest2$Attrition, Predicted = LR.Preds)
+MSPE$Resisdual <- MSPE$Observed - MSPE$Predicted
+MSPE$SquaredResidual <- MSPE$Resisdual^2
 MSPE
 mean(MSPE$SquaredResidual)
 RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
@@ -302,36 +370,43 @@ RMSE
 
 
 
-
-
 # Linear Regression for Salary
+## Change Job Level to Character
 ```{r}
-noSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
-head(noSalary)
+attrition.jl <- attrition.df
+attrition.jl$JobLevel <- gsub(1, "1", attrition.jl$JobLevel)
+attrition.jl$JobLevel <- gsub(2, "2", attrition.jl$JobLevel)
+attrition.jl$JobLevel <- gsub(3, "3", attrition.jl$JobLevel)
+attrition.jl$JobLevel <- gsub(4, "4", attrition.jl$JobLevel)
+attrition.jl$JobLevel <- gsub(5, "5", attrition.jl$JobLevel)
+attrition.jl$JobLevel <- as.character(attrition.jl$JobLevel)
+
+# Job level model
+JLModel_fit = lm(MonthlyIncome~JobLevel, data = attrition.jl)
+summary(JLModel_fit)
+preds <- predict(JLModel_fit)
+hist(JLModel_fit$residuals, col = "blue", main = "Histogram of Residuals")
+plot(JLModel_fit$fitted.values,JLModel_fit$residuals, main = "Plot of Residuals v. Fitted Values")
+attrition.jl %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
+  geom_point() + 
+  geom_line(data = attrition.jl, aes(x = JobLevel, y = preds, col = "red"))
 ```
 
-# Best Linear Regression Model!!!!
-```{r}
-attrition.df$JobLevel <- gsub(1, "1", attrition.df$JobLevel)
-attrition.df$JobLevel <- gsub(2, "2", attrition.df$JobLevel)
-attrition.df$JobLevel <- gsub(3, "3", attrition.df$JobLevel)
-attrition.df$JobLevel <- gsub(4, "4", attrition.df$JobLevel)
-attrition.df$JobLevel <- gsub(5, "5", attrition.df$JobLevel)
-attrition.df$JobLevel <- as.character(attrition.df$JobLevel)
 
-# not as good
+## Predict Using Single Variable
+```{r}
 Model1_fit = lm(MonthlyIncome~JobLevel, data = attrition.df)
 summary(Model1_fit)
-preds <- predict(Model1_fit)
 hist(Model1_fit$residuals, col = "blue", main = "Histogram of Residuals")
-plot(Model1_fit$fitted.values,Model1_fit$residuals, main = "Plot of Residuals v. Fitted Values")
-attrition.df %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attrition.df, aes(x = JobLevel, y = preds, col = "red"))
-
-test1 <- predict(Model1_fit, noSalary, interval = "confidence") 
-test1 <- as.data.frame(test1)
-noSalary$MonthlyIncome <- test1[,1]
+SalaryPredict <- predict(Model1_fit, noSalary, interval = "confidence") 
+SalaryPredict <- as.data.frame(SalaryPredict)
+noSalary$MonthlyIncome <- SalaryPredict[,1]
 noSalary %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = MonthlyIncome, col = "red"))
+```
 
+
+## Predict Using Exponential Variable (Squared)
+```{r}
 # Good Exponential Model 
 attriton.df2 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2))
 fit = lm(MonthlyIncome~JobLevel+JobLevel2, attriton.df2)
@@ -346,7 +421,11 @@ test2 <- predict(fit, noSalary, interval = "confidence")
 test2 <- as.data.frame(test2)
 noSalary$Salary <- test2[,1]
 noSalary %>% ggplot(aes(x = JobLevel, y = Salary)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = Salary , col = "red"))
+```
 
+
+## Predict Using Exponential Variable (Cubed)
+```{r}
 # Adding extra exponential variable helped
 attriton.df3 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2), 
                                        JobLevel3 = (JobLevel^3))
@@ -355,15 +434,23 @@ summary(fit2)
 preds2 <- predict(fit2)
 hist(fit2$residuals, col = "blue", main = "Histogram of Residuals")
 plot(fit2$fitted.values,fit2$residuals, main = "Plot of Residuals v. Fitted Values")
-attriton.df3 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df3, aes(x = JobLevel, y = preds2, col = "red"))
+attriton.df3 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
+  geom_point() + 
+  geom_line(data = attriton.df3, aes(x = JobLevel, y = preds2, col = "red"))
 
 
 noSalary <- noSalary %>% mutate(JobLevel3 = (JobLevel^3))
 test3 <- predict(fit2, noSalary, interval = "confidence") 
 test3 <- as.data.frame(test3)
 noSalary$Salary2 <- test3[,1]
-noSalary %>% ggplot(aes(x = JobLevel, y = Salary2)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = Salary2 , col = "red"))
+noSalary %>% ggplot(aes(x = JobLevel, y = Salary2)) + 
+  geom_point() + 
+  geom_line(data = noSalary, aes(x = JobLevel, y = Salary2 , col = "red"))
+```
 
+
+## Predict Using Exponential Variable (4th Root)
+```{r}
 # Adding extra exponential variable hurt
 attriton.df4 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2), 
                                        JobLevel3 = (JobLevel^3), 
@@ -373,8 +460,14 @@ summary(fit3)
 preds3 <- predict(fit3)
 hist(fit3$residuals, col = "blue", main = "Histogram of Residuals")
 plot(fit3$fitted.values,fit3$residuals, main = "Plot of Residuals v. Fitted Values")
-attriton.df4 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df4, aes(x = JobLevel, y = preds3, col = "red"))
+attriton.df4 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
+  geom_point() + 
+  geom_line(data = attriton.df4, aes(x = JobLevel, y = preds3, col = "red"))
+```
 
+
+## Mulitple Variable Linear Regression
+```{r}
 # best !!!
 Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
 summary(Model2_fit)
@@ -402,15 +495,4 @@ RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
 RMSE
 
 
-```
-
-
-
-
-
-
-```{r}
-ggplot(attrition.df, aes(x=PerformanceRating, y=MonthlyIncome)) +
-  geom_point() +
-  coord_flip()
 ```
