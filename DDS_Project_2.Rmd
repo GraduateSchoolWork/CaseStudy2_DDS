@@ -32,6 +32,7 @@ attrition.df <- read.csv("CaseStudy2-data.csv", header = T)
 str(attrition.df)
 noSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
 str(noSalary)
+Rcolors <- c("aquamarine3", "coral1", "plum4")
 ```
 
 
@@ -45,6 +46,7 @@ bar <- ggplot(attrition.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
   ggtitle("Attrition Dependent on Marital Status ") +
   xlab("Attrition") +
   ylab("Count")
+bar <- bar + scale_fill_manual(values = Rcolors)
 
 # Yes Attrition
 # make new data frames for married, divorced, and single
@@ -61,6 +63,7 @@ Yes_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"),
 plot1 <- ggplot(Yes_df, aes(x="", y=Value, fill=MaritalStatus)) +
   geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: Yes")
 pie1 <- plot1 + coord_polar("y", start=0)
+pie1 <- pie1 + scale_fill_manual(values = Rcolors)
 
 # No Attrition
 # make new data frames for married, divorced, and single
@@ -77,6 +80,7 @@ No_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"),
 plot2 <- ggplot(No_df, aes(x="", y=Value, fill=MaritalStatus)) +
   geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: No")
 pie2 <- plot2 + coord_polar("y", start=0)
+pie2 <- pie2 + scale_fill_manual(values = Rcolors)
 
 piecharts <- plot_grid(pie2,pie1, ncol = 2,  labels = c("B","C"))
 allplots <- plot_grid(bar,piecharts, nrow = 2, labels = "A")
@@ -90,7 +94,8 @@ ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
   ggtitle("Monthly Income Based on Attrition") +
   xlab("Monthly Income") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = Rcolors)
 ```
 
 
@@ -101,7 +106,8 @@ ggplot(attrition.df, aes(x=MonthlyIncome, fill = Attrition)) +
   facet_wrap(~JobRole) +
   ggtitle("Monthly Income Based on Job Role") +
   xlab("Monthly Income") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = Rcolors)
 ```
 
 ## Percentage of Attrition Based on Multiple Variables
@@ -112,7 +118,8 @@ EDA1 <- ggplot(attrition.df, aes(x=RelationshipSatisfaction, fill = Attrition)) 
   ggtitle("Relationship Satisfaction") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA2 <- ggplot(attrition.df, aes(x=JobLevel, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -120,56 +127,64 @@ EDA2 <- ggplot(attrition.df, aes(x=JobLevel, fill = Attrition)) +
   ggtitle("Job Level") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA3 <- ggplot(attrition.df, aes(x=JobSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Job Satisfaction") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA4 <- ggplot(attrition.df, aes(x=YearsWithCurrManager, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Years With Current Manager") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA5 <- ggplot(attrition.df, aes(x=YearsSinceLastPromotion, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Years Since Last Promotion") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA6 <- ggplot(attrition.df, aes(x=YearsAtCompany, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Years At Company") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA7 <- ggplot(attrition.df, aes(x=YearsInCurrentRole, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Years in Current Role") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA8 <- ggplot(attrition.df, aes(x=NumCompaniesWorked, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Companies Worked") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA9 <- ggplot(attrition.df, aes(x=MaritalStatus, fill = Attrition)) +
   geom_bar(position = "fill") +
   ggtitle("Marital Status") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  scale_fill_manual(values = Rcolors)
 
 EDA10 <- plot_grid(EDA1,EDA2,EDA3,EDA4,EDA5,EDA6,EDA7,EDA8,EDA9, ncol = 3, nrow = 3)
 EDA10
@@ -179,27 +194,33 @@ EDA10
 ```{r}
 EDA.A <- ggplot(attrition.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Total Working Years vs Percent Salary Hike")
+  ggtitle("Total Working Years vs Percent Salary Hike") +
+  scale_color_manual(values = Rcolors)
 
 EDA.B <- ggplot(attrition.df, aes(x=YearsWithCurrManager, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Years With Current Manager vs Percent Salary Hike")
+  ggtitle("Years With Current Manager vs Percent Salary Hike") +
+  scale_color_manual(values = Rcolors)
 
 EDA.C <-ggplot(attrition.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = Attrition)) +
   geom_point() +
-  ggtitle("Years At Company vs Years In CurrentRole")
+  ggtitle("Years At Company vs Years In CurrentRole") +
+  scale_color_manual(values = Rcolors)
 
 EDA.D <- ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Monthly Income")
+  ggtitle("Age vs Monthly Income") +
+  scale_color_manual(values = Rcolors)
 
 EDA.E <- ggplot(attrition.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Job YearsSinceLastPromotion")
+  ggtitle("Age vs Job YearsSinceLastPromotion") + 
+  scale_color_manual(values = Rcolors)
 
 EDA.F <- ggplot(attrition.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Percent Salary Hike")
+  ggtitle("Age vs Percent Salary Hike") +
+  scale_color_manual(values = Rcolors)
 
 EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.D,EDA.E,EDA.F, ncol = 2, nrow = 3)
 EDA.G
@@ -214,7 +235,8 @@ ggpairs(attrition.df, columns = c(2,25,35,36,3), aes(color = Attrition))
 ```{r}
 ggplot(attrition.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
-  facet_wrap(~JobRole)
+  facet_wrap(~JobRole) +
+  scale_color_manual(values = Rcolors)
 ```
 
 
@@ -356,13 +378,11 @@ dfTest2 <- na.omit(dfTest2)
 LR.fit <- lm(Attrition~Age*MonthlyIncome, data = dfTrain2)
 summary(LR.fit)
 LR.Preds <- predict(LR.fit, newdata = dfTest2)
-as.data.frame(LR.Preds)
 
 # Metrics for model
 MSPE <- data.frame(Observed = dfTest2$Attrition, Predicted = LR.Preds)
 MSPE$Resisdual <- MSPE$Observed - MSPE$Predicted
 MSPE$SquaredResidual <- MSPE$Resisdual^2
-MSPE
 mean(MSPE$SquaredResidual)
 RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
 RMSE
@@ -401,7 +421,17 @@ hist(Model1_fit$residuals, col = "blue", main = "Histogram of Residuals")
 SalaryPredict <- predict(Model1_fit, noSalary, interval = "confidence") 
 SalaryPredict <- as.data.frame(SalaryPredict)
 noSalary$MonthlyIncome <- SalaryPredict[,1]
-noSalary %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = MonthlyIncome, col = "red"))
+
+#predicted values plotted
+noSalary %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
+  geom_point() + 
+  geom_line(data = noSalary, aes(x = JobLevel, y = MonthlyIncome, col = "red")) +
+  ggtitle("Predicted Values using Single Varialbe Model") +
+  scale_color_manual(values = Rcolors)
+
+# distribution of responses
+ggplot(noSalary, aes(x=MonthlyIncome)) +
+  geom_histogram()
 ```
 
 
@@ -414,13 +444,24 @@ summary(fit)
 preds2 <- predict(fit)
 hist(fit$residuals, col = "blue", main = "Histogram of Residuals")
 plot(fit$fitted.values,fit$residuals, main = "Plot of Residuals v. Fitted Values")
-attriton.df2 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + geom_point() + geom_line(data = attriton.df2, aes(x = JobLevel, y = preds, col = "red"))
 
+# show model with predicted values
+attriton.df2 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
+  geom_point() + 
+  geom_line(data = attriton.df2, aes(x = JobLevel, y = preds2, col = "red")) +
+  scale_color_manual(values = Rcolors)
+
+# use model to predict data with no identifiers 
 noSalary <- noSalary %>% mutate(JobLevel2 = (JobLevel^2))
 test2 <- predict(fit, noSalary, interval = "confidence") 
 test2 <- as.data.frame(test2)
+
+# predicted values plotted
 noSalary$Salary <- test2[,1]
-noSalary %>% ggplot(aes(x = JobLevel, y = Salary)) + geom_point() + geom_line(data = noSalary, aes(x = JobLevel, y = Salary , col = "red"))
+noSalary %>% ggplot(aes(x = JobLevel, y = Salary)) + 
+  geom_point() + 
+  geom_line(data = noSalary, aes(x = JobLevel, y = Salary , col = "red")) +
+  scale_color_manual(values = Rcolors)
 ```
 
 
@@ -431,21 +472,26 @@ attriton.df3 = attrition.df %>% mutate(JobLevel2 = (JobLevel^2),
                                        JobLevel3 = (JobLevel^3))
 fit2 = lm(MonthlyIncome~JobLevel+JobLevel2+JobLevel3, attriton.df3)
 summary(fit2)
-preds2 <- predict(fit2)
+preds3 <- predict(fit2)
 hist(fit2$residuals, col = "blue", main = "Histogram of Residuals")
 plot(fit2$fitted.values,fit2$residuals, main = "Plot of Residuals v. Fitted Values")
+
+# plot with predicted values on original dataset
 attriton.df3 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
   geom_point() + 
-  geom_line(data = attriton.df3, aes(x = JobLevel, y = preds2, col = "red"))
+  geom_line(data = attriton.df3, aes(x = JobLevel, y = preds3, col = "red"))
 
-
+# model with exponential variable
 noSalary <- noSalary %>% mutate(JobLevel3 = (JobLevel^3))
 test3 <- predict(fit2, noSalary, interval = "confidence") 
 test3 <- as.data.frame(test3)
 noSalary$Salary2 <- test3[,1]
+
+# predicted values plotted
 noSalary %>% ggplot(aes(x = JobLevel, y = Salary2)) + 
   geom_point() + 
-  geom_line(data = noSalary, aes(x = JobLevel, y = Salary2 , col = "red"))
+  geom_line(data = noSalary, aes(x = JobLevel, y = Salary2 , col = "red")) +
+  scale_color_manual(values = Rcolors)
 ```
 
 
@@ -462,37 +508,58 @@ hist(fit3$residuals, col = "blue", main = "Histogram of Residuals")
 plot(fit3$fitted.values,fit3$residuals, main = "Plot of Residuals v. Fitted Values")
 attriton.df4 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) + 
   geom_point() + 
-  geom_line(data = attriton.df4, aes(x = JobLevel, y = preds3, col = "red"))
+  geom_line(data = attriton.df4, aes(x = JobLevel, y = preds3, col = "red")) +
+  scale_color_manual(values = Rcolors)
 ```
 
 
 ## Mulitple Variable Linear Regression
 ```{r}
-# best !!!
-Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
+# best model !!!
+Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = attrition.df)
 summary(Model2_fit)
-preds <- predict(Model2_fit)
+preds4 <- predict(Model2_fit)
 
 hist(Model2_fit$residuals, col = "blue", main = "Histogram of Residuals")
-
-sqrt(sum((Model1_fit$residuals)^2))
 sqrt(sum((Model2_fit$residuals)^2))
 
-# better
-Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole+JobSatisfaction, data = dfTrain)
+# predict with this model
+preds5 <- predict(Model2_fit, noSalary)
+preds5<- as.data.frame(preds5)
+noSalary$Salary3 <- preds5[,1]
+
+# plot predicted values
+noSalary %>% ggplot(aes(x = Age, y = Salary3)) + 
+  geom_point() + 
+  #geom_line(data = noSalary, aes(x = Age, y = Salary3 , col = "red")) +
+  scale_color_manual(values = Rcolors) +
+  ggtitle("Predicted Salary by Age") +
+  ylab("Salary")
+
+#write table
+#write.table()
+```
+
+
+```{r}
+# decent model
+Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole+JobSatisfaction, data = attrition.df)
 summary(Model2_fit)
 
+Model2_Preds = predict(Model2_fit, newdata = noSalary)
 
-Model2_Preds = predict(Model2_fit, newdata = dfTest)
-as.data.frame(Model2_Preds)
 
-MSPE = data.frame(Observed = dfTest$MonthlyIncome, Predicted = Model2_Preds)
-MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
-MSPE$SquaredResidual = MSPE$Resisdual^2
-MSPE
-mean(MSPE$SquaredResidual)
-RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
-RMSE
+
+
+# Didn't seem to match the values given by the model
+
+# MSPE = data.frame(Observed = dfTest$MonthlyIncome, Predicted = Model2_Preds)
+# MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
+# MSPE$SquaredResidual = MSPE$Resisdual^2
+# MSPE
+# mean(MSPE$SquaredResidual)
+# RMSE <- mean((MSPE$Observed - MSPE$Predicted)^2) %>% sqrt()
+# RMSE
 
 
 ```
