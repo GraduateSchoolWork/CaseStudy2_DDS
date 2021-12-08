@@ -485,6 +485,7 @@ attriton.df3 %>% ggplot(aes(x = JobLevel, y = MonthlyIncome)) +
 noSalary <- noSalary %>% mutate(JobLevel3 = (JobLevel^3))
 test3 <- predict(fit2, noSalary, interval = "confidence") 
 test3 <- as.data.frame(test3)
+
 noSalary$Salary2 <- test3[,1]
 
 # predicted values plotted
@@ -537,7 +538,7 @@ noSalary %>% ggplot(aes(x = Age, y = Salary3)) +
   ylab("Salary")
 
 #write table
-#write.table()
+write.csv(noSalary, file = "Case2PredictionsBoyd_Pandey Salary.csv", row.names=FALSE)
 ```
 
 
