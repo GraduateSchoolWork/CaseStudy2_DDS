@@ -31,81 +31,92 @@ library(e1071) #Naive Bayes
 
 ## Load the data
 ```{r}
-df = read.csv("CaseStudy2-data.csv",header = TRUE)
-str(df)
-skim(df)
+attrition.df = read.csv("CaseStudy2-data.csv",header = TRUE)
+str(attrition.df)
+skim(attrition.df)
 # The dataset has 870 observations (rows) and 36 variables (columns).
 ```
 
 ## Investigate missing values in each column
 ```{r}
 #Looking for missing values in dataset
-gg_miss_var(df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
+gg_miss_var(attrition.df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
 # No missing values are found for any variables (columns) in the dataset.
 ```
 
 
 # Exploratory Data Analysis (EDA)
 
+## Distribution of Attrition
+```{r}
+barplot(summary(attrition.df$Attrition), col = "orange", xlab = "Attrition", main = "Distribution for Attrition")
+
+attrition.df %>% ggplot(aes(x = Attrition, fill = Attrition)) + geom_bar() + ggtitle("Distribution of Attrition")  + theme(plot.title = element_text(hjust = 0.5))
+
+attrition.df %>% ggplot(aes(x = Attrition)) + geom_bar(fill = "orange") + ggtitle("Distribution of Attrition")  + theme(plot.title = element_text(hjust = 0.5))
+
+#attrition.df %>% ggplot(aes(x = Attrition)) + geom_histogram(stat = "count", fill = "orange") + ggtitle("Distribution of Attrition") + theme(plot.title = element_text(hjust = 0.5))
+```
+
 ## Attrition based on Monthly Income
 ```{r}
 # Let's start with looking at distribution of Monthly Income 
-hist(df$MonthlyIncome, breaks = 10, col = "orange", xlab = "Monthly Income", main = "Histogram for Monthly Income")
+hist(attrition.df$MonthlyIncome, breaks = 10, col = "orange", xlab = "Monthly Income", main = "Histogram for Monthly Income")
 # Look at the minimum and maximum salary in the dataset.
-range(df$MonthlyIncome)
+range(attrition.df$MonthlyIncome)
 # We see from the histogram that most number of employees have salary in range 2000-4000 and then second highest range is 4000-6000. Let's create income groups and look at Attrition for those income groups.
-df$IncomeGroup <- cut(df$MonthlyIncome, breaks = c(0, 2000, 4000, 6000, 10000, 15000, 20000), labels = c("<$2000","$2000-$4000","$4000-$6000","$6000-$10000","$10000-$15000","$15000-$20000"))
+attrition.df$IncomeGroup <- cut(attrition.df$MonthlyIncome, breaks = c(0, 2000, 4000, 6000, 10000, 15000, 20000), labels = c("<$2000","$2000-$4000","$4000-$6000","$6000-$10000","$10000-$15000","$15000-$20000"))
 
-df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Income Group", y = "Percent Employees", title = "Attriton for Income Groups") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Income Group", y = "Percent Employees", title = "Attrition for Income Groups") + theme(plot.title = element_text(hjust = 0.5))
 # Lowest Income Group (<$2000) has the highest Attrition rate, followed by second lowest Income Group ($2000-$4000).
 ```
 
 ## Attrition based on Age
 ```{r}
 # Let's look at age distribution of employees in dataset.
-hist(df$Age, breaks = 10, col = "orange", xlab = "Age", main = "Histogram for Employee Ages")
+hist(attrition.df$Age, breaks = 10, col = "orange", xlab = "Age", main = "Histogram for Employee Ages")
 # Histogram shows normal distribution with most employees between ages of 25 and 40.
 # Now, let's find out the age range in dataset.
-range(df$Age)
+range(attrition.df$Age)
 # Employees in this dataset are 18 to 60 years old.
 # Let's create age groups and look at Attrition for those age groups.
-df$AgeGroup <- cut(df$Age, breaks = c(18,25,35,45,60), labels = c("18-25","25-35","35-45","45-60"), include.lowest = TRUE)
+attrition.df$AgeGroup <- cut(attrition.df$Age, breaks = c(18,25,35,45,60), labels = c("18-25","25-35","35-45","45-60"), include.lowest = TRUE)
 
-df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Age Group", y = "Percent Employees", title = "Attriton for Age Groups") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Age Group", y = "Percent Employees", title = "Attrition for Age Groups") + theme(plot.title = element_text(hjust = 0.5))
 # Younger age groups 18-25 and 25-35 have higher attrition rate.
 ```
 
 ## Attrition based on Job Role
 ```{r}
-df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attriton for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + coord_flip() + scale_x_discrete(labels = function(x) str_wrap(x, width = 12))
+attrition.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attrition for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + coord_flip() + scale_x_discrete(labels = function(x) str_wrap(x, width = 12))
 # Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 ```
 
 ## Attrition based on Gender
 ```{r}
-df %>% ggplot(aes_string(x = "Gender", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Gender", y = "Percent Employees", title = "Attriton for Gender") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "Gender", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Gender", y = "Percent Employees", title = "Attrition for Gender") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ## Attrition based on Overtime
 ```{r}
-df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Overtime", y = "Percent Employees", title = "Attriton for Overtime") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Overtime", y = "Percent Employees", title = "Attrition for Overtime") + theme(plot.title = element_text(hjust = 0.5))
 # Higher attrition rate for employees who work overtime
 ```
 
 ## Attrition based on Job Satisfaction
 ```{r}
-df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Satisfaction", y = "Percent Employees", title = "Attriton for Job Satisfaction") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "JobSatisfaction", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Satisfaction", y = "Percent Employees", title = "Attrition for Job Satisfaction") + theme(plot.title = element_text(hjust = 0.5))
 # We see that attrition level goes down with higher Job Satisfaction.
 ```
 
 ## Attrition based on Hourly Rate, Daily Rate, Monthly Rate, Monthly Income
 ```{r}
-ggpairs(data = df, mapping = aes(color = Attrition), columns = c("HourlyRate","DailyRate","MonthlyRate","MonthlyIncome"))
+ggpairs(data = attrition.df, mapping = aes(color = Attrition), columns = c("HourlyRate","DailyRate","MonthlyRate","MonthlyIncome"))
 ```
 
 ## Attrition based on Business Travel
 ```{r}
-df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Business Travel", y = "Percent Employees", title = "Attriton for Business Travel") + theme(plot.title = element_text(hjust = 0.5))
+attrition.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Business Travel", y = "Percent Employees", title = "Attrition for Business Travel") + theme(plot.title = element_text(hjust = 0.5))
 # Attrition level goes up from Non-Travel to Travel-Frequently category.
 ```
 
@@ -113,25 +124,38 @@ df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + geom_bar(p
 # Models
 
 
-## Naive Bayes
+## Naive Bayes - !!!!!! Best model to predict Attrition !!!!!!
 ```{r}
 set.seed(9)
-#new.df <- df[,c(2,3,6,12,15,16,17,18,19,20,22,24,29,30,32,33,34,36)] # OR could be used as below
-new.df <- select(df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
-splitPerc <- .85
-trainIndices <- sample(1:dim(new.df)[1],round(splitPerc * dim(new.df)[1]))
-dfTrain1 <- new.df[trainIndices,]
-dfTest1 <- new.df[-trainIndices,]
+#NB.df <- attrition.df[,c(2,3,6,12,15,16,17,18,19,20,22,24,29,30,32,33,34,36)] # OR could be used as below
+NB.df <- select(attrition.df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+NBsplitPerc <- .85
+NBtrainIndices <- sample(1:dim(NB.df)[1],round(NBsplitPerc * dim(NB.df)[1]))
+NBdfTrain <- NB.df[NBtrainIndices,]
+NBdfTest <- NB.df[-NBtrainIndices,]
 
-model1 = naiveBayes(Attrition~.,data = dfTrain1)
-confusionMatrix(table(predict(model1,dfTest1),dfTest1$Attrition))
+NBmodel = naiveBayes(Attrition~.,data = NBdfTrain)
+confusionMatrix(table(predict(NBmodel,NBdfTest),NBdfTest$Attrition))
+#NBpreds = predict(NBmodel, NB.df)
+
+NoAttrition = read.csv("CaseStudy2CompSet No Attrition.csv", header = TRUE)
+NBpreds = predict(NBmodel, NoAttrition)
+NBpreds = data.frame(NBpreds)
+NoAttrition$Attrition = NBpreds$NBpreds
+#str(NoAttrition)
+#head(NoAttrition, n=20)
+#sum(grepl("Yes", NoAttrition$Attrition))
+#sum(grepl("Yes", df$Attrition))
+Attrition.Classify = NoAttrition %>% select("ID", "Attrition") %>% arrange(ID)
+
+write.csv(Attrition.Classify, file = "Case2PredictionsPandey Attrition.csv", row.names=FALSE)
 ```
 
 
 ## K-NN - !!!!!!! NOT WORKING !!!!!!!
 ```{r}
 set.seed(50)
-knn.df <- select(df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
+knn.df <- select(attrition.df, "Attrition", "Age", "Department", "EnvironmentSatisfaction", "JobInvolvement", "JobLevel", "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome", "NumCompaniesWorked", "OverTime", "StockOptionLevel", "TotalWorkingYears", "WorkLifeBalance", "YearsAtCompany", "YearsInCurrentRole", "YearsWithCurrManager")
 knn.df$Department = as.numeric(knn.df$Department)
 knn.df$JobRole = as.numeric(knn.df$JobRole)
 knn.df$MaritalStatus = as.numeric(knn.df$MaritalStatus)
@@ -151,10 +175,10 @@ confusionMatrix(table(KNNclassifications,KNNtest$Attrition))
 ## Linear Regression
 ```{r}
 set.seed(9)
-#LR.df <- select(df, "Age", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears")
+#LR.df <- select(attrition.df, "Age", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears")
 # "Age", "Attrition", "MaritalStatus", "StockOptionLevel", "OverTime", "JobSatisfaction", "EnvironmentSatisfaction", 
 # "NumCompaniesWorked", "YearsAtCompany", 
-LR.df <- select(df, "Department", "JobInvolvement", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears", "WorkLifeBalance", "YearsInCurrentRole", "YearsWithCurrManager")
+LR.df <- select(attrition.df, "Department", "JobInvolvement", "JobLevel", "JobRole", "MonthlyIncome", "TotalWorkingYears", "WorkLifeBalance", "YearsInCurrentRole", "YearsWithCurrManager")
 LRsplitPerc <- .90
 LRtrainIndices <- sample(1:dim(LR.df)[1],round(LRsplitPerc * dim(LR.df)[1]))
 LRTrain <- LR.df[LRtrainIndices,]
