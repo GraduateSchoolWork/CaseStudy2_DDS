@@ -1,0 +1,107 @@
+---
+title: "DDS_CaseStudy_2"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+author: "Kevin Boyd & Shikha Pandey"
+date: "12/7/2021"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Load Libraries
+```{r, message=F}
+library(tidyverse)
+library(GGally)
+library(cowplot)
+library(class)
+library(caret)
+library(e1071)
+library(reshape2)
+library(stringr)
+library(naniar)
+library(skimr) #for data summary
+```
+
+
+# Load and look at the data
+```{r}
+# The dataset has 870 observations (rows) and 36 variables (columns).
+employee.df <- read.csv("CaseStudy2-data.csv", header = T)
+str(employee.df)
+skim(employee.df)
+NoSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
+str(NoSalary)
+skim(NoSalary)
+NoAttrition = read.csv("CaseStudy2CompSet No Attrition.csv", header = TRUE)
+str(NoAttrition)
+skim(NoAttrition)
+Rcolors <- c("aquamarine3", "coral1", "plum4")
+```
+
+
+# Employee EDA
+## Look at the Variables
+### Investigate Missing Values in Each Column
+```{r}
+#Looking for missing values in dataset
+gg_miss_var(employee.df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
+# No missing values are found for any variables (columns) in the dataset.
+```
+
+### Attrition Dependent on Marital Status
+```{r}
+# divorce contribute to attrition
+bar <- ggplot(employee.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
+  geom_bar() +
+  facet_wrap(~Attrition) +
+  ggtitle("Attrition Dependent on Marital Status ") +
+  xlab("Attrition") +
+  ylab("Count")
+bar <- bar + scale_fill_manual(values = Rcolors)
+
+# Yes Attrition
+# make new data frames for married, divorced, and single
+df1 <- employee.df %>%
+  filter(Attrition == "Yes")
+df1length <- NROW(df1)
+df1married <- length(grep("Married", df1$MaritalStatus))
+df1divorced <- length(grep("Divorced", df1$MaritalStatus))
+df1single <- length(grep("Single", df1$MaritalStatus))
+
+Yes_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"), 
+                     Value = c(df1married,df1divorced,df1single))
+
+plot1 <- ggplot(Yes_df, aes(x="", y=Value, fill=MaritalStatus)) +
+  geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: Yes")
+pie1 <- plot1 + coord_polar("y", start=0)
+pie1 <- pie1 + scale_fill_manual(values = Rcolors)
+
+# No Attrition
+# make new data frames for married, divorced, and single
+df2 <- employee.df %>%
+  filter(Attrition == "No")
+df2length <- NROW(df2)
+df2married <- length(grep("Married", df2$MaritalStatus))
+df2divorced <- length(grep("Divorced", df2$MaritalStatus))
+df2single <- length(grep("Single", df2$MaritalStatus))
+
+No_df <- data.frame(MaritalStatus = c("Married","Divorced","Single"), 
+                     Value = c(df2married,df2divorced,df2single))
+
+plot2 <- ggplot(No_df, aes(x="", y=Value, fill=MaritalStatus)) +
+  geom_bar(width = 1, stat = "identity") + xlab("") + ylab("") + ggtitle("Attrition: No")
+pie2 <- plot2 + coord_polar("y", start=0)
+pie2 <- pie2 + scale_fill_manual(values = Rcolors)
+
+piecharts <- plot_grid(pie2,pie1, ncol = 2,  labels = c("B","C"))
+allplots <- plot_grid(bar,piecharts, nrow = 2, labels = "A")
+allplots
+```
+
+
+
