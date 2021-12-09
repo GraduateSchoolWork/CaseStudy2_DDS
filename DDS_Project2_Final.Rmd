@@ -392,6 +392,13 @@ NoAttrition$Attrition = NBpreds$NBpreds
 Attrition.Classify = NoAttrition %>% select("ID", "Attrition") %>% arrange(ID)
 
 #write.csv(Attrition.Classify, file = "Case2PredictionsBoyd_Pandey Attrition.csv", row.names=FALSE)
+
+# plot counts of attrition
+ggplot(Attrition.Classify, aes(x=Attrition, fill=Attrition)) +
+  geom_bar(fill = Rcolors[c(1,2)]) +
+  ggtitle("Predicted Attrition") +
+  ylab("Count") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
