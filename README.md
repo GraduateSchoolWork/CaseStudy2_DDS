@@ -5,7 +5,7 @@ DDSAnalytics is an analytics company that specializes in talent management solut
 
 We have to use R on a given dataset to do a data analysis to identify factors that lead to attrition.
 Based on statistical analysis and evidence, we will identify the top three factors that contribute to turnover along with any other interesting trends and observations. 
-We will also build a model to predict attrition.
+We will also build models to predict attrition and salary.
 
 ### Attrition
 We will say something about attrition.
