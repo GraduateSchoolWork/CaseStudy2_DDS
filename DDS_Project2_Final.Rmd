@@ -240,6 +240,7 @@ EDA1 <- ggplot(employee.df, aes(x=RelationshipSatisfaction, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA1 <- EDA1 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA2 <- ggplot(employee.df, aes(x=JobLevel, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -249,6 +250,7 @@ EDA2 <- ggplot(employee.df, aes(x=JobLevel, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA2 <- EDA2 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA3 <- ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -257,6 +259,7 @@ EDA3 <- ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA3 <- EDA3 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA4 <- ggplot(employee.df, aes(x=YearsWithCurrManager, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -265,6 +268,7 @@ EDA4 <- ggplot(employee.df, aes(x=YearsWithCurrManager, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA4 <- EDA4 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA5 <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -273,6 +277,7 @@ EDA5 <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA5 <- EDA5 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA6 <- ggplot(employee.df, aes(x=YearsAtCompany, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -281,6 +286,7 @@ EDA6 <- ggplot(employee.df, aes(x=YearsAtCompany, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA6 <- EDA6 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA7 <- ggplot(employee.df, aes(x=YearsInCurrentRole, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -289,6 +295,7 @@ EDA7 <- ggplot(employee.df, aes(x=YearsInCurrentRole, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA7 <- EDA7 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA8 <- ggplot(employee.df, aes(x=NumCompaniesWorked, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -297,6 +304,7 @@ EDA8 <- ggplot(employee.df, aes(x=NumCompaniesWorked, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA8 <- EDA8 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA9 <- ggplot(employee.df, aes(x=MaritalStatus, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -305,6 +313,7 @@ EDA9 <- ggplot(employee.df, aes(x=MaritalStatus, fill = Attrition)) +
   scale_y_continuous(labels = scales::percent) + 
   theme(legend.position = "none") +
   scale_fill_manual(values = Rcolors)
+EDA9 <- EDA9 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA10 <- plot_grid(EDA1,EDA2,EDA3,EDA4,EDA5,EDA6,EDA7,EDA8,EDA9, ncol = 3, nrow = 3)
 EDA10
@@ -315,33 +324,45 @@ EDA10
 ```{r}
 EDA.A <- ggplot(employee.df, aes(x=TotalWorkingYears, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Total Working Years vs Percent Salary Hike") +
-  scale_color_manual(values = Rcolors)
+  ggtitle("Total Working Years vs % Salary Hike") +
+  scale_color_manual(values = Rcolors) +
+  ylab("% Salary Hike") + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.B <- ggplot(employee.df, aes(x=YearsWithCurrManager, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Years With Current Manager vs Percent Salary Hike") +
-  scale_color_manual(values = Rcolors)
+  ggtitle("Yrs With Manager vs % Salary Hike") +
+  scale_color_manual(values = Rcolors) +
+  ylab("% Salary Hike") +
+  xlab("Yrs With Manager") + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.C <-ggplot(employee.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = Attrition)) +
   geom_point() +
-  ggtitle("Years At Company vs Years In CurrentRole") +
-  scale_color_manual(values = Rcolors)
+  ggtitle("Yrs At Company vs Yrs In Role") +
+  scale_color_manual(values = Rcolors) +
+  ylab("Yrs In Role") + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.D <- ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
   ggtitle("Age vs Monthly Income") +
-  scale_color_manual(values = Rcolors)
+  scale_color_manual(values = Rcolors) + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.E <- ggplot(employee.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Job YearsSinceLastPromotion") + 
-  scale_color_manual(values = Rcolors)
+  ggtitle("Age vs Job Yrs Last Promotion") + 
+  scale_color_manual(values = Rcolors) +
+  ylab("Yrs Last Promotion") + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.F <- ggplot(employee.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Percent Salary Hike") +
-  scale_color_manual(values = Rcolors)
+  ggtitle("Age vs % Salary Hike") +
+  scale_color_manual(values = Rcolors) +
+  ylab("% Salary Hike") + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.D,EDA.E,EDA.F, ncol = 2, nrow = 3)
 EDA.G
@@ -416,11 +437,11 @@ sqrt(sum((Model2_fit$residuals)^2))
 
 # predict with this model
 preds5 <- predict(Model2_fit, NoSalary)
-preds5<- as.data.frame(preds5)
-NoSalary$Salary3 <- preds5[,1]
+preds5 <- as.data.frame(preds5)
+NoSalary$Salary <- preds5[,1]
 
 # plot predicted values
-NoSalary %>% ggplot(aes(x = Age, y = Salary3)) + 
+NoSalary %>% ggplot(aes(x = Age, y = Salary)) + 
   geom_point() + 
   #geom_line(data = NoSalary, aes(x = Age, y = Salary3 , col = "red")) +
   scale_color_manual(values = Rcolors) +
@@ -428,7 +449,7 @@ NoSalary %>% ggplot(aes(x = Age, y = Salary3)) +
   ylab("Salary") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-Salary.Classify = NoSalary %>% select("ID", "Salary3") %>% arrange(ID)
+Salary.Classify = NoSalary %>% select("ID", "Salary") %>% arrange(ID)
 
-#write.csv(NoSalary, file = "Case2PredictionsBoyd_Pandey Salary.csv", row.names=FALSE)
+#write.csv(Salary.Classify, file = "Case2PredictionsBoyd_Pandey Salary.csv", row.names=FALSE)
 ```
