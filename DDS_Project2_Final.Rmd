@@ -108,7 +108,14 @@ employee.df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) +
 
 ### Attrition based on Job Role
 ```{r}
-employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Job Role", y = "Percent Employees", title = "Attrition for Job Role") + theme(plot.title = element_text(hjust = 0.5)) + coord_flip() + scale_x_discrete(labels = function(x) str_wrap(x, width = 12)) + scale_fill_manual(values = Rcolors)
+employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + 
+  geom_bar(position = "fill") + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = "Job Role", y = "Percent Employees", title = "Attrition for Job Role") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  coord_flip() + 
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 12)) + 
+  scale_fill_manual(values = Rcolors)
 # Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 ```
 
@@ -125,7 +132,19 @@ ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
 ```
 
 
-### Attrition Analysis by Job Role
+### Attrition Analysis for Job Role and Job Satisfaction
+```{r}
+ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) + 
+  ggtitle("Attrition Based on Job Role and Job Satisfaction") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = Rcolors) +
+  facet_wrap(~JobRole)
+```
+
+
+### Attrition Analysis for Job Role, Age, and Monthly Income
 ```{r}
 ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
@@ -138,14 +157,24 @@ ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
 
 ### Attrition based on Overtime
 ```{r}
-employee.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Overtime", y = "Percent Employees", title = "Attrition for Overtime") + theme(plot.title = element_text(hjust = 0.5)) + scale_fill_manual(values = Rcolors)
+employee.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + 
+  geom_bar(position = "fill") + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = "Overtime", y = "Percent Employees", title = "Attrition for Overtime") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  scale_fill_manual(values = Rcolors)
 # Higher attrition rate for employees who work overtime
 ```
 
 
 ### Attrition based on Business Travel
 ```{r}
-employee.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent) + labs(x = "Business Travel", y = "Percent Employees", title = "Attrition for Business Travel") + theme(plot.title = element_text(hjust = 0.5)) + scale_fill_manual(values = Rcolors)
+employee.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + 
+  geom_bar(position = "fill") + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = "Business Travel", y = "Percent Employees", title = "Attrition for Business Travel") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  scale_fill_manual(values = Rcolors)
 # Attrition level goes up from Non-Travel to Travel-Frequently category.
 ```
 
