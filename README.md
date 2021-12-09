@@ -1,9 +1,9 @@
 # DDS_Project_2
 DDS Case Study 2
 
-## Attrition
+### Attrition
 We will say something about attrition.
 
 
-## Salary
+### Salary
 We will say something about salary.
