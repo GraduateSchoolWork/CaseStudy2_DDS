@@ -344,11 +344,11 @@ EDA.C <-ggplot(employee.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = 
   ylab("Yrs In Role") + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 
-EDA.D <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, y=NumCompaniesWorked, color = Attrition)) +
-  geom_point() +
-  ggtitle("Yrs Last Promotion vs Num Companies Worked") +
-  scale_color_manual(values = Rcolors) + 
-  theme(plot.title = element_text(size = 12, hjust = 0.5))
+# EDA.D <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, y=NumCompaniesWorked, color = Attrition)) +
+#  geom_point() +
+#  ggtitle("Yrs Last Promotion vs Num Companies Worked") +
+#  scale_color_manual(values = Rcolors) + 
+#  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.E <- ggplot(employee.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attrition)) +
   geom_point() +
@@ -357,14 +357,14 @@ EDA.E <- ggplot(employee.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attri
   ylab("Yrs Last Promotion") + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 
-EDA.F <- ggplot(employee.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
-  geom_point() +
-  ggtitle("Age vs % Salary Hike") +
-  scale_color_manual(values = Rcolors) +
-  ylab("% Salary Hike") + 
-  theme(plot.title = element_text(size = 12, hjust = 0.5))
+# EDA.F <- ggplot(employee.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
+#  geom_point() +
+#  ggtitle("Age vs % Salary Hike") +
+#  scale_color_manual(values = Rcolors) +
+#  ylab("% Salary Hike") + 
+#  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
-EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.D,EDA.E,EDA.F, ncol = 2, nrow = 3)
+EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.E, ncol = 2, nrow = 2)
 EDA.G
 ```
 
