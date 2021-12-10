@@ -344,9 +344,9 @@ EDA.C <-ggplot(employee.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = 
   ylab("Yrs In Role") + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 
-EDA.D <- ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
+EDA.D <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, y=NumCompaniesWorked, color = Attrition)) +
   geom_point() +
-  ggtitle("Age vs Monthly Income") +
+  ggtitle("Yrs Last Promotion vs Num Companies Worked") +
   scale_color_manual(values = Rcolors) + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 
@@ -404,7 +404,7 @@ ggplot(Attrition.Classify, aes(x=Attrition, fill=Attrition)) +
 
 ### k-NN Models
 ```{r}
-kNNsplitPerc <- .90
+kNNsplitPerc <- .8
 kNNtrainIndices <- sample(1:dim(employee.df)[1],round(kNNsplitPerc * dim(employee.df)[1]))
 kNNdfTrain <- employee.df[kNNtrainIndices,]
 kNNdfTest <- employee.df[-kNNtrainIndices,]
@@ -424,12 +424,12 @@ confusionMatrix(table(classifications1,kNNdfTest$Attrition))
 ```{r}
 # Train and Test for Linear Regression
 set.seed(9)
-splitPerc <- .8
-trainIndices <- sample(1:dim(employee.df)[1],round(splitPerc * dim(employee.df)[1]))
-dfTrain2 <- employee.df[trainIndices,]
-dfTest2 <- employee.df[-trainIndices,]
-dfTrain2 <- na.omit(dfTrain2)
-dfTest2 <- na.omit(dfTest2)
+lmsplitPerc <- .8
+trainIndices <- sample(1:dim(employee.df)[1],round(lmsplitPerc * dim(employee.df)[1]))
+dfTrain <- employee.df[trainIndices,]
+dfTest <- employee.df[-trainIndices,]
+dfTrain <- na.omit(dfTrain)
+dfTest <- na.omit(dfTest)
 ```
 
 #### Mulitple Variable Linear Regression
@@ -439,7 +439,7 @@ Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = employee.df)
 summary(Model2_fit)
 preds4 <- predict(Model2_fit)
 
-hist(Model2_fit$residuals, col = "blue", main = "Histogram of Residuals")
+hist(Model2_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
 sqrt(sum((Model2_fit$residuals)^2))
 
 # predict with this model
@@ -449,9 +449,7 @@ NoSalary$Salary <- preds5[,1]
 
 # plot predicted values
 NoSalary %>% ggplot(aes(x = Age, y = Salary)) + 
-  geom_point() + 
-  #geom_line(data = NoSalary, aes(x = Age, y = Salary3 , col = "red")) +
-  scale_color_manual(values = Rcolors) +
+  geom_point(color = "darkslateblue") + 
   ggtitle("Predicted Salary by Age") +
   ylab("Salary") + 
   theme(plot.title = element_text(hjust = 0.5))
