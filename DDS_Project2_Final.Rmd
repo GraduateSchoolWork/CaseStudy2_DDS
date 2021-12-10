@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# Load Libraries
+# Load Libraries and Set Color Scheme
 ```{r, message=F}
 library(tidyverse)
 library(GGally)
@@ -27,6 +27,7 @@ library(reshape2)
 library(stringr)
 library(naniar)
 library(skimr) #for data summary
+Rcolors <- c("lightseagreen", "darkslateblue","orange")
 ```
 
 
@@ -37,13 +38,7 @@ employee.df <- read.csv("CaseStudy2-data.csv", header = T)
 str(employee.df)
 skim(employee.df)
 NoSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
-str(NoSalary)
-skim(NoSalary)
 NoAttrition = read.csv("CaseStudy2CompSet No Attrition.csv", header = TRUE)
-str(NoAttrition)
-skim(NoAttrition)
-Rcolors <- c("lightseagreen", "darkslateblue","orange")
-  #c("aquamarine3", "coral1", "plum4")
 ```
 
 
@@ -65,8 +60,7 @@ employee.df %>% ggplot(aes(x = Attrition, fill = Attrition)) +
   scale_fill_manual(values = Rcolors)
 ```
 
-
-### Monthly Income Continuous
+### Monthly Income
 ```{r}
 ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
@@ -77,7 +71,7 @@ ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
   scale_fill_manual(values = Rcolors)
 ```
 
-### Monthly Income Categorical
+### Monthly Income by Groups
 ```{r}
 # We see from the histogram that most number of employees have salary in range 2000-4000 and then second highest range is 4000-6000. Let's create income groups and look at Attrition for those income groups.
 employee.df$IncomeGroup <- cut(employee.df$MonthlyIncome, breaks = c(0, 2000, 4000, 6000, 10000, 15000, 20000), labels = c("<$2000","$2000-$4000","$4000-$6000","$6000-$10000","$10000-$15000","$15000-$20000"))
@@ -91,7 +85,7 @@ employee.df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) +
 # Lowest Income Group (<$2000) has the highest Attrition rate, followed by second lowest Income Group ($2000-$4000).
 ```
 
-### Looking at Age
+### Age by Groups
 ```{r}
 # Let's create age groups and look at Attrition for those age groups.
 employee.df$AgeGroup <- cut(employee.df$Age, breaks = c(18,25,35,45,60), labels = c("18-25","25-35","35-45","45-60"), include.lowest = TRUE)
@@ -105,8 +99,7 @@ employee.df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) +
 # Younger age groups 18-25 and 25-35 have higher attrition rate.
 ```
 
-
-### Attrition based on Job Role
+### Job Role
 ```{r}
 employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
@@ -119,12 +112,12 @@ employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) +
 # Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 ```
 
-### Monthly Income Based on Job Role
+### Monthly Income based on Job Role
 ```{r}
 ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
   facet_wrap(~JobRole) +
-  ggtitle("Monthly Income Based on Job Role") +
+  ggtitle("Monthly Income based on Job Role") +
   xlab("Monthly Income") +
   ylab("Count") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -132,30 +125,30 @@ ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
 ```
 
 
-### Attrition Analysis for Job Role and Job Satisfaction
+### Job Role and Job Satisfaction
 ```{r}
 ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent) + 
-  ggtitle("Attrition Based on Job Role and Job Satisfaction") +
+  ggtitle("Attrition based on Job Role and Job Satisfaction") +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = Rcolors) +
   facet_wrap(~JobRole)
 ```
 
 
-### Attrition Analysis for Job Role, Age, and Monthly Income
+### Job Role, Age, and Monthly Income
 ```{r}
 ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
   facet_wrap(~JobRole) +
-  ggtitle("Attrition Based on Age and Monthly Income") +
+  ggtitle("Attrition based on Age and Monthly Income") +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_color_manual(values = Rcolors)
 ```
 
 
-### Attrition based on Overtime
+### Overtime
 ```{r}
 employee.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
@@ -167,7 +160,7 @@ employee.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) +
 ```
 
 
-### Attrition based on Business Travel
+### Business Travel
 ```{r}
 employee.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
@@ -179,7 +172,7 @@ employee.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) +
 ```
 
 
-### Attrition Dependent on Marital Status
+### Marital Status
 ```{r}
 # divorce contribute to attrition
 bar <- ggplot(employee.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
@@ -230,7 +223,7 @@ allplots
 ```
 
 
-### Percentage of Attrition Based on Multiple Variables
+### Bar Plots Multiple Variables
 ```{r}
 EDA1 <- ggplot(employee.df, aes(x=RelationshipSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
@@ -430,15 +423,13 @@ dfTrain <- employee.df[trainIndices,]
 dfTest <- employee.df[-trainIndices,]
 dfTrain <- na.omit(dfTrain)
 dfTest <- na.omit(dfTest)
-```
 
-#### Mulitple Variable Linear Regression
-```{r}
-# best model !!!
+# multiple variable linear regression
 Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = employee.df)
 summary(Model2_fit)
 preds4 <- predict(Model2_fit)
 
+#show residuals
 hist(Model2_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
 sqrt(sum((Model2_fit$residuals)^2))
 
@@ -458,3 +449,4 @@ Salary.Classify = NoSalary %>% select("ID", "Salary") %>% arrange(ID)
 
 #write.csv(Salary.Classify, file = "Case2PredictionsBoyd_Pandey Salary.csv", row.names=FALSE)
 ```
+
