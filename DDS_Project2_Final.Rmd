@@ -137,7 +137,7 @@ ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
 ```
 
 
-### Job Role, Age, and Monthly Income
+### Job Role, Age, and Monthly Income 
 ```{r}
 ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
   geom_point() +
