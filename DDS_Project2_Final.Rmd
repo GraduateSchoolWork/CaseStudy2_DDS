@@ -460,12 +460,30 @@ ggplot(masterSpec, aes(x=seq(1,100,1), y=masterSpec)) +
   xlab("Number of Train/Test Sets") +
   ylab("Specificity") + 
   theme(plot.title = element_text(hjust = 0.5))
+
+# plot together
+masterAcc$Value <- masterAcc$masterAcc
+masterAcc$Test <- "Accuracy"
+masterSpec$Value <- masterSpec$masterSpec
+masterSpec$Test <- "Specificity"
+masterSens$Value <- masterSens$masterSens
+masterSens$Test <- "Sensitivity"
+NB.df <- rbind(masterAcc[,c(2,3,4)],masterSens[,c(2,3,4)],masterSpec[,c(2,3,4)])
+
+
+ggplot(NB.df, aes(x=TestNumber, y=Value, linetype=Test, colors=Test)) + 
+  geom_line() +
+  ggtitle("Accuracy, Sensitivity, & Specificity of 100 Train/Test Sets") +
+  xlab("Number of Train/Test Sets") +
+  ylab("Statistical Values") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = Rcolors)
 ```
 
 
 ### k-NN Models
 ```{r}
-kNNsplitPerc <- .8
+kNNsplitPerc <- .7
 kNNtrainIndices <- sample(1:dim(employee.df)[1],round(kNNsplitPerc * dim(employee.df)[1]))
 kNNdfTrain <- employee.df[kNNtrainIndices,]
 kNNdfTest <- employee.df[-kNNtrainIndices,]
@@ -480,6 +498,7 @@ classifications1 <- knn(kNNdfTrain[,c(2,35)], kNNdfTest[,c(2,35)], kNNdfTrain$At
 confusionMatrix(table(classifications1,kNNdfTest$Attrition))
 ```
 
+
 ## Salary Model
 ### Linear Regression
 ```{r}
@@ -492,19 +511,35 @@ dfTest <- employee.df[-trainIndices,]
 dfTrain <- na.omit(dfTrain)
 dfTest <- na.omit(dfTest)
 
+# multiple variable linear regression with train and test
+Model1_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
+summary(Model1_fit)
+
+#show residuals
+hist(Model1_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
+sqrt(sum((Model1_fit$residuals)^2))
+
+# predict with this model
+preds2 <- predict(Model1_fit, newdata = dfTest)
+
+# assess model
+MSPE = data.frame(Observed = dfTest$MonthlyIncome, Predicted = preds2)
+MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
+MSPE$SquaredResidual = MSPE$Resisdual^2
+mean(MSPE$SquaredResidual)
+
 # multiple variable linear regression
 Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = employee.df)
 summary(Model2_fit)
-preds4 <- predict(Model2_fit)
 
 #show residuals
 hist(Model2_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
 sqrt(sum((Model2_fit$residuals)^2))
 
 # predict with this model
-preds5 <- predict(Model2_fit, NoSalary)
-preds5 <- as.data.frame(preds5)
-NoSalary$Salary <- preds5[,1]
+preds2 <- predict(Model2_fit, newdata = NoSalary)
+preds2 <- as.data.frame(preds2)
+NoSalary$Salary <- preds2[,1]
 
 # plot predicted values
 NoSalary %>% ggplot(aes(x = Age, y = Salary)) + 
