@@ -471,7 +471,7 @@ ggplot(NB.df, aes(x=TestNumber, y=Value, linetype=Test, colors=Test)) +
 ```{r}
 kNNsplitPerc <- .7
 
-# Create dataframe for k-NN model
+# Create dataframe for k-NN model 
 knn.df <- employee.df
 
 # Create standardized variables
