@@ -8,8 +8,8 @@ Based on statistical analysis and evidence, we will identify the top three facto
 We will also build models to predict attrition and salary.
 
 ### Attrition
-We will say something about attrition.
+We built a model to predict attrition that had an 87% Accuracy, 90% Sensitivity and 75% Specificity.
 
 
 ### Salary
-We will say something about salary.
+We built a model to predict salary had an RMSE of 1080 and P-Value of < 2.2e-16
