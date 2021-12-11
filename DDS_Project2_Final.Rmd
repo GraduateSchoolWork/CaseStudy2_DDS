@@ -14,9 +14,15 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Introduction
+
+DDSAnalytics is an analytics company that specializes in talent management solutions for Fortune 100 companies. It is planning to leverage data science for talent management to gain a competitive edge over its competition. Their executive leadership has identified predicting employee turnover as its first application of data science for talent management and they have tasked our data science team to conduct an analysis of existing employee data.
+
+We have to use R on a given dataset to do a data analysis to identify factors that lead to attrition. Based on statistical analysis and evidence, we will identify the top three factors that contribute to turnover along with any other interesting trends and observations. We will also build models to predict attrition and salary.
+
 
 # Load Libraries and Set Color Scheme
-```{r, message=F}
+```{r message=F, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(GGally)
 library(cowplot)
@@ -369,6 +375,7 @@ NoAttrition$Attrition = NBpreds$NBpreds
 
 Attrition.Classify = NoAttrition %>% select("ID", "Attrition") %>% arrange(ID)
 
+# This code was used to label the predicted attrition on the file provided, but commented out to not replace the file when knitted at a later time.
 #write.csv(Attrition.Classify, file = "Case2PredictionsBoyd_Pandey Attrition.csv", row.names=FALSE)
 
 # plot counts of attrition
@@ -542,8 +549,16 @@ NoSalary %>% ggplot(aes(x = Age, y = Salary)) +
   ylab("Salary") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-Salary.Classify = NoSalary %>% select("ID", "Salary") %>% arrange(ID)
+#Salary.Classify = NoSalary %>% select("ID", "Salary") %>% arrange(ID)
 
+# This code was used to label the predicted Salary amounts on the file provided, but commented out to not replace the file when knitted at a later time.
 #write.csv(Salary.Classify, file = "Case2PredictionsBoyd_Pandey Salary.csv", row.names=FALSE)
 ```
 
+
+# Conclusion
+1. Top 3 factors that contribute to employee turnover are Age, Monthly Income, and Job Role.
+2. Sales Representative have the highest turnover.
+3. Manufacturing Director, Research Director and Managers are the oldest, have highest income and have the least amount of turnover.
+4. We used a Naïve Bayes model to predict attrition with 87% Accuracy.
+5. We used a Linear Regression model to predict salary with RMSE of 1080 and extremely low P-Value (< 2.2e-16).
