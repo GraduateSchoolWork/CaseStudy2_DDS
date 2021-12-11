@@ -129,8 +129,7 @@ ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
 ### Job Role and Job Satisfaction
 ```{r}
 ggplot(employee.df, aes(x=JobSatisfaction, fill = Attrition)) +
-  geom_bar(position = "fill") +
-  scale_y_continuous(labels = scales::percent) + 
+  geom_bar() +
   ggtitle("Attrition based on Job Role and Job Satisfaction") +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = Rcolors) +
