@@ -482,12 +482,12 @@ kNNdfTrain <- knn.df[kNNtrainIndices,]
 kNNdfTest <- knn.df[-kNNtrainIndices,]
 
 # Internal Model
-classifications <- knn.cv(knn.df[,c(37,38)],knn.df$Attrition, k = 20)
+classifications <- knn.cv(knn.df[,c(2,25)],knn.df$Attrition, k = 20)
 confusionMatrix(table(classifications,knn.df$Attrition))
 
 # External Model
-classifications1 <- knn(kNNdfTrain[,c(37,38)], kNNdfTest[,c(37,38)], kNNdfTrain$Attrition, 
-                       prob = TRUE, k = 10)
+classifications1 <- knn(kNNdfTrain[,c(2,35)], kNNdfTest[,c(2,35)], kNNdfTrain$Attrition, 
+                       prob = TRUE, k = 20)
 
 confusionMatrix(table(classifications1,kNNdfTest$Attrition))
 ```
