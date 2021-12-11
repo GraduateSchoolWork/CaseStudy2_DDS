@@ -37,8 +37,9 @@ Rcolors <- c("lightseagreen", "darkslateblue","orange")
 employee.df <- read.csv("CaseStudy2-data.csv", header = T)
 str(employee.df)
 skim(employee.df)
-NoSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
+# There are 300 observations in each dataset below to predict Attrition and Salary respectively.
 NoAttrition = read.csv("CaseStudy2CompSet No Attrition.csv", header = TRUE)
+NoSalary <- read.csv("CaseStudy2CompSet(NoSalary).csv", header = T)
 ```
 
 
@@ -46,9 +47,8 @@ NoAttrition = read.csv("CaseStudy2CompSet No Attrition.csv", header = TRUE)
 ## Look at the Variables
 ### Investigate Missing Values in Each Column
 ```{r}
-#Looking for missing values in dataset
-gg_miss_var(employee.df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
 # No missing values are found for any variables (columns) in the dataset.
+gg_miss_var(employee.df, show_pct = T) + labs(title = 'Percent Missing Values') + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ### Attrition Distribution
@@ -62,6 +62,7 @@ employee.df %>% ggplot(aes(x = Attrition, fill = Attrition)) +
 
 ### Monthly Income
 ```{r}
+# We see from the histogram that most number of employees have salary in range $2000-$4000 and then second highest range is $4000-$6000.
 ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
   geom_histogram() +
   ggtitle("Monthly Income Based on Attrition") +
@@ -73,16 +74,16 @@ ggplot(employee.df, aes(x=MonthlyIncome, fill = Attrition)) +
 
 ### Monthly Income by Groups
 ```{r}
-# We see from the histogram that most number of employees have salary in range 2000-4000 and then second highest range is 4000-6000. Let's create income groups and look at Attrition for those income groups.
+# Let's create income groups and look at Attrition for those income groups.
 employee.df$IncomeGroup <- cut(employee.df$MonthlyIncome, breaks = c(0, 2000, 4000, 6000, 10000, 15000, 20000), labels = c("<$2000","$2000-$4000","$4000-$6000","$6000-$10000","$10000-$15000","$15000-$20000"))
 
+# Lowest Income Group (<$2000) has the highest Attrition rate, followed by second lowest Income Group ($2000-$4000).
 employee.df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "Income Group", y = "Percent Employees", title = "Attrition for Income Groups") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = Rcolors)
-# Lowest Income Group (<$2000) has the highest Attrition rate, followed by second lowest Income Group ($2000-$4000).
 ```
 
 ### Age by Groups
@@ -90,17 +91,18 @@ employee.df %>% ggplot(aes_string(x = "IncomeGroup", fill = "Attrition")) +
 # Let's create age groups and look at Attrition for those age groups.
 employee.df$AgeGroup <- cut(employee.df$Age, breaks = c(18,25,35,45,60), labels = c("18-25","25-35","35-45","45-60"), include.lowest = TRUE)
 
+# Younger age groups 18-25 and 25-35 have higher attrition rate.
 employee.df %>% ggplot(aes_string(x = "AgeGroup", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "Age Group", y = "Percent Employees", title = "Attrition for Age Groups") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = Rcolors)
-# Younger age groups 18-25 and 25-35 have higher attrition rate.
 ```
 
 ### Job Role
 ```{r}
+# Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
   scale_y_continuous(labels = scales::percent) + 
@@ -109,7 +111,6 @@ employee.df %>% ggplot(aes_string(x = "JobRole", fill = "Attrition")) +
   coord_flip() + 
   scale_x_discrete(labels = function(x) str_wrap(x, width = 12)) + 
   scale_fill_manual(values = Rcolors)
-# Research Directors have highest attrition rate whereas Sales Representatives have the least. 
 ```
 
 ### Monthly Income based on Job Role
@@ -150,31 +151,31 @@ ggplot(employee.df, aes(x=Age, y=MonthlyIncome, color = Attrition)) +
 
 ### Overtime
 ```{r}
+# Higher attrition rate for employees who work overtime.
 employee.df %>% ggplot(aes_string(x = "OverTime", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "Overtime", y = "Percent Employees", title = "Attrition for Overtime") + 
   theme(plot.title = element_text(hjust = 0.5)) + 
   scale_fill_manual(values = Rcolors)
-# Higher attrition rate for employees who work overtime
 ```
 
 
 ### Business Travel
 ```{r}
+# Attrition level goes up from Non-Travel to Travel-Frequently category.
 employee.df %>% ggplot(aes_string(x = "BusinessTravel", fill = "Attrition")) + 
   geom_bar(position = "fill") + 
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "Business Travel", y = "Percent Employees", title = "Attrition for Business Travel") + 
   theme(plot.title = element_text(hjust = 0.5)) + 
   scale_fill_manual(values = Rcolors)
-# Attrition level goes up from Non-Travel to Travel-Frequently category.
 ```
 
 
 ### Marital Status
 ```{r}
-# divorce contribute to attrition
+# Divorce contribute to attrition
 bar <- ggplot(employee.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
   geom_bar() +
   facet_wrap(~Attrition) +
@@ -184,7 +185,7 @@ bar <- ggplot(employee.df, aes(x=MaritalStatus, fill = MaritalStatus)) +
 bar <- bar + scale_fill_manual(values = Rcolors)
 
 # Yes Attrition
-# make new data frames for married, divorced, and single
+# Make new data frames for married, divorced, and single
 df1 <- employee.df %>%
   filter(Attrition == "Yes")
 df1length <- NROW(df1)
@@ -201,7 +202,7 @@ pie1 <- plot1 + coord_polar("y", start=0)
 pie1 <- pie1 + scale_fill_manual(values = Rcolors)
 
 # No Attrition
-# make new data frames for married, divorced, and single
+# Make new data frames for married, divorced, and single
 df2 <- employee.df %>%
   filter(Attrition == "No")
 df2length <- NROW(df2)
@@ -227,7 +228,6 @@ allplots
 ```{r}
 EDA1 <- ggplot(employee.df, aes(x=RelationshipSatisfaction, fill = Attrition)) +
   geom_bar(position = "fill") +
-  #facet_wrap(~JobRole) +
   ggtitle("Relationship Satisfaction") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
@@ -237,7 +237,6 @@ EDA1 <- EDA1 + theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA2 <- ggplot(employee.df, aes(x=JobLevel, fill = Attrition)) +
   geom_bar(position = "fill") +
-  #facet_wrap(~JobRole) +
   ggtitle("Job Level") +
   ylab("% Count") + 
   scale_y_continuous(labels = scales::percent) + 
@@ -337,25 +336,12 @@ EDA.C <-ggplot(employee.df, aes(x=YearsAtCompany, y=YearsInCurrentRole, color = 
   ylab("Yrs In Role") + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 
-# EDA.D <- ggplot(employee.df, aes(x=YearsSinceLastPromotion, y=NumCompaniesWorked, color = Attrition)) +
-#  geom_point() +
-#  ggtitle("Yrs Last Promotion vs Num Companies Worked") +
-#  scale_color_manual(values = Rcolors) + 
-#  theme(plot.title = element_text(size = 12, hjust = 0.5))
-
 EDA.E <- ggplot(employee.df, aes(x=Age, y=YearsSinceLastPromotion, color = Attrition)) +
   geom_point() +
   ggtitle("Age vs Job Yrs Last Promotion") + 
   scale_color_manual(values = Rcolors) +
   ylab("Yrs Last Promotion") + 
   theme(plot.title = element_text(size = 12, hjust = 0.5))
-
-# EDA.F <- ggplot(employee.df, aes(x=Age, y=PercentSalaryHike, color = Attrition)) +
-#  geom_point() +
-#  ggtitle("Age vs % Salary Hike") +
-#  scale_color_manual(values = Rcolors) +
-#  ylab("% Salary Hike") + 
-#  theme(plot.title = element_text(size = 12, hjust = 0.5))
 
 EDA.G <- plot_grid(EDA.A,EDA.B,EDA.C,EDA.E, ncol = 2, nrow = 2)
 EDA.G
@@ -373,11 +359,11 @@ NBtrainIndices <- sample(1:dim(NB.df)[1],round(NBsplitPerc * dim(NB.df)[1]))
 NBdfTrain <- NB.df[NBtrainIndices,]
 NBdfTest <- NB.df[-NBtrainIndices,]
 
-# run NB model
+# Naive Bayes model
 NBmodel = naiveBayes(Attrition~.,data = NBdfTrain)
 confusionMatrix(table(predict(NBmodel,NBdfTest),NBdfTest$Attrition))
 
-# make predictions with model
+# Make predictions with model
 NBpreds = predict(NBmodel, NoAttrition)
 NBpreds = data.frame(NBpreds)
 NoAttrition$Attrition = NBpreds$NBpreds
@@ -419,7 +405,7 @@ for(j in 1:iterations)
   masterSpec[j] = CM$byClass[2]
 }
 
-# accuracy measurements
+# Accuracy measurements
 MeanAcc = colMeans(masterAcc)
 MeanAcc
 masterAcc <- data.frame(masterAcc)
@@ -433,7 +419,7 @@ ggplot(masterAcc, aes(x=seq(1,100,1), y=masterAcc)) +
   ylab("Accuracy") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-# sensitivity measurements
+# Sensitivity measurements
 MeanSens = colMeans(masterSens)
 MeanSens
 masterSens <- data.frame(masterSens)
@@ -447,7 +433,7 @@ ggplot(masterSens, aes(x=seq(1,100,1), y=masterSens)) +
   ylab("Sensitivity") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-# specificity measurements
+# Specificity measurements
 MeanSpec = colMeans(masterSpec)
 MeanSpec
 masterSpec <- data.frame(masterSpec)
@@ -461,7 +447,7 @@ ggplot(masterSpec, aes(x=seq(1,100,1), y=masterSpec)) +
   ylab("Specificity") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-# plot together
+# Plot together
 masterAcc$Value <- masterAcc$masterAcc
 masterAcc$Test <- "Accuracy"
 masterSpec$Value <- masterSpec$masterSpec
@@ -484,17 +470,26 @@ ggplot(NB.df, aes(x=TestNumber, y=Value, linetype=Test, colors=Test)) +
 ### k-NN Models
 ```{r}
 kNNsplitPerc <- .7
-kNNtrainIndices <- sample(1:dim(employee.df)[1],round(kNNsplitPerc * dim(employee.df)[1]))
-kNNdfTrain <- employee.df[kNNtrainIndices,]
-kNNdfTest <- employee.df[-kNNtrainIndices,]
+
+# Create dataframe for k-NN model
+knn.df <- employee.df
+
+# Create standardized variables
+knn.df$z_Age = scale(knn.df$Age)
+knn.df$z_YearsSinceLastPromotion = scale(knn.df$YearsSinceLastPromotion)
+
+kNNtrainIndices <- sample(1:dim(knn.df)[1],round(kNNsplitPerc * dim(knn.df)[1]))
+kNNdfTrain <- knn.df[kNNtrainIndices,]
+kNNdfTest <- knn.df[-kNNtrainIndices,]
 
 # Internal Model
-classifications <- knn.cv(employee.df[,c(2,35)],employee.df$Attrition, k = 20)
-confusionMatrix(table(classifications,employee.df$Attrition))
+classifications <- knn.cv(knn.df[,c(37,38)],knn.df$Attrition, k = 20)
+confusionMatrix(table(classifications,knn.df$Attrition))
 
 # External Model
-classifications1 <- knn(kNNdfTrain[,c(2,35)], kNNdfTest[,c(2,35)], kNNdfTrain$Attrition, 
+classifications1 <- knn(kNNdfTrain[,c(37,38)], kNNdfTest[,c(37,38)], kNNdfTrain$Attrition, 
                        prob = TRUE, k = 10)
+
 confusionMatrix(table(classifications1,kNNdfTest$Attrition))
 ```
 
@@ -511,37 +506,37 @@ dfTest <- employee.df[-trainIndices,]
 dfTrain <- na.omit(dfTrain)
 dfTest <- na.omit(dfTest)
 
-# multiple variable linear regression with train and test
+# Multiple variable linear regression with train and test
 Model1_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = dfTrain)
 summary(Model1_fit)
 
-#show residuals
+# Show residuals
 hist(Model1_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
 sqrt(sum((Model1_fit$residuals)^2))
 
-# predict with this model
+# Predict with this model
 preds2 <- predict(Model1_fit, newdata = dfTest)
 
-# assess model
+# Assess model
 MSPE = data.frame(Observed = dfTest$MonthlyIncome, Predicted = preds2)
 MSPE$Resisdual = MSPE$Observed - MSPE$Predicted
 MSPE$SquaredResidual = MSPE$Resisdual^2
 mean(MSPE$SquaredResidual)
 
-# multiple variable linear regression
+# Multiple variable linear regression
 Model2_fit = lm(MonthlyIncome~Age+JobLevel+JobRole, data = employee.df)
 summary(Model2_fit)
 
-#show residuals
+# Show residuals
 hist(Model2_fit$residuals, col = "darkslateblue", main = "Histogram of Residuals")
 sqrt(sum((Model2_fit$residuals)^2))
 
-# predict with this model
+# Predict with this model
 preds2 <- predict(Model2_fit, newdata = NoSalary)
 preds2 <- as.data.frame(preds2)
 NoSalary$Salary <- preds2[,1]
 
-# plot predicted values
+# Plot predicted values
 NoSalary %>% ggplot(aes(x = Age, y = Salary)) + 
   geom_point(color = "darkslateblue") + 
   ggtitle("Predicted Salary by Age") +
