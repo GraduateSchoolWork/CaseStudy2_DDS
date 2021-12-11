@@ -394,6 +394,74 @@ ggplot(Attrition.Classify, aes(x=Attrition, fill=Attrition)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+### Multiple Train/Test Sets
+```{r}
+iterations = 100
+
+masterAcc = matrix(nrow = iterations)
+masterSens = matrix(nrow = iterations)
+masterSpec = matrix(nrow = iterations)
+
+splitPerc = .85 #Training / Test split Percentage
+
+for(j in 1:iterations)
+{
+  
+  trainIndices = sample(1:dim(NB.df)[1],round(splitPerc * dim(NB.df)[1]))
+  train = NB.df[trainIndices,]
+  test = NB.df[-trainIndices,]
+  
+  model = naiveBayes(train[,c(2:18)],train$Attrition)
+  table(predict(model,test[,c(2:18)]),test$Attrition)
+  CM = confusionMatrix(table(predict(model,test[,c(2:18)]),test$Attrition))
+  masterAcc[j] = CM$overall[1]
+  masterSens[j] = CM$byClass[1]
+  masterSpec[j] = CM$byClass[2]
+}
+
+# accuracy measurements
+MeanAcc = colMeans(masterAcc)
+MeanAcc
+masterAcc <- data.frame(masterAcc)
+masterAcc$TestNumber <- 1:nrow(masterAcc)
+max(masterAcc$masterAcc)
+min(masterAcc$masterAcc)
+ggplot(masterAcc, aes(x=seq(1,100,1), y=masterAcc)) + 
+  geom_line(color="darkslateblue") +
+  ggtitle("Accuracy of 100 Train/Test Sets") +
+  xlab("Number of Train/Test Sets") +
+  ylab("Accuracy") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# sensitivity measurements
+MeanSens = colMeans(masterSens)
+MeanSens
+masterSens <- data.frame(masterSens)
+masterSens$TestNumber <- 1:nrow(masterSens)
+max(masterSens$masterSens)
+min(masterSens$masterSens)
+ggplot(masterSens, aes(x=seq(1,100,1), y=masterSens)) + 
+  geom_line(color="darkslateblue") +
+  ggtitle("Sensitivity of 100 Train/Test Sets") +
+  xlab("Number of Train/Test Sets") +
+  ylab("Sensitivity") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# specificity measurements
+MeanSpec = colMeans(masterSpec)
+MeanSpec
+masterSpec <- data.frame(masterSpec)
+masterSpec$TestNumber <- 1:nrow(masterSpec)
+max(masterSpec$masterSpec)
+min(masterSpec$masterSpec)
+ggplot(masterSpec, aes(x=seq(1,100,1), y=masterSpec)) + 
+  geom_line(color="darkslateblue") +
+  ggtitle("Specificity of 100 Train/Test Sets") +
+  xlab("Number of Train/Test Sets") +
+  ylab("Specificity") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
 
 ### k-NN Models
 ```{r}
