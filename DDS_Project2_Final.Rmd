@@ -458,7 +458,7 @@ NB.df <- rbind(masterAcc[,c(2,3,4)],masterSens[,c(2,3,4)],masterSpec[,c(2,3,4)])
 
 
 ggplot(NB.df, aes(x=TestNumber, y=Value, linetype=Test, colors=Test)) + 
-  geom_line() +
+  geom_line(color = "darkslateblue") +
   ggtitle("Accuracy, Sensitivity, & Specificity of 100 Train/Test Sets") +
   xlab("Number of Train/Test Sets") +
   ylab("Statistical Values") + 
